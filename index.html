@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal de Voluntariado UCSAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: cabeçalho institucional + navegação por hash; cada área em faixas (bands) alternadas; painel CAEX só para editores */
+:root{
+  --navy:#2B3A82; --navy-deep:#1F2B66; --gold:#F0C462; --blue:#005A9C;
+  --bg:#F5F6FA; --surface:#FFFFFF; --surface-2:#EEF0F7; --band:#E9ECF6;
+  --ink:#1A2040; --muted:#5A6180; --line:#DADDEA;
+  --accent:var(--navy); --accent-ink:#FFFFFF; --gold-ink:#3A2C05; --eyebrow:#005A9C;
+  --ok:#1E7A4C; --ok-bg:#E3F4EA; --warn:#8A5A00; --warn-bg:#FDF1D6; --bad:#A3283A; --bad-bg:#FBE5E8; --info:#00528F; --info-bg:#E2EEF8;
+  --font-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
+  --radius:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10132A; --surface:#181C38; --surface-2:#20254A; --band:#141833; --ink:#E9EBF7; --muted:#A3A8C7; --line:#2E3463;
+    --accent:#8C9BF0; --accent-ink:#0E1230; --gold-ink:#2A1F02; --eyebrow:#F0C462;
+    --ok:#6FD39E; --ok-bg:#163828; --warn:#F0C462; --warn-bg:#3A2F12; --bad:#F2909D; --bad-bg:#3E1A22; --info:#8CC3F2; --info-bg:#162E48;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10132A; --surface:#181C38; --surface-2:#20254A; --band:#141833; --ink:#E9EBF7; --muted:#A3A8C7; --line:#2E3463;
+  --accent:#8C9BF0; --accent-ink:#0E1230; --gold-ink:#2A1F02; --eyebrow:#F0C462;
+  --ok:#6FD39E; --ok-bg:#163828; --warn:#F0C462; --warn-bg:#3A2F12; --bad:#F2909D; --bad-bg:#3E1A22; --info:#8CC3F2; --info-bg:#162E48;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.55}
+h1,h2,h3,h4{font-family:var(--font-display);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,3.4vw,2.1rem)}
+h3{font-size:1.15rem}
+p{margin:0}
+a{color:var(--accent)}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+.narrow{max-width:68ch}
+.muted{color:var(--muted)}
+.small{font-size:.92rem}
+.band{padding:44px 0}
+.band.alt{background:var(--band)}
+.band.dark{background:var(--navy-deep);color:#fff}
+.band.dark .muted{color:#C9CEEC}
+.section-head{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.section-head.row{flex-direction:row;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--eyebrow)}
+.band.dark .eyebrow{color:var(--gold)}
+
+/* Cabeçalho */
+.topbar{background:var(--navy-deep);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.brand-mark{width:42px;height:42px;border-radius:10px;background:var(--gold);display:grid;place-items:center;flex:none}
+.brand-name{font-family:var(--font-display);font-weight:800;font-size:1.05rem;line-height:1.1}
+.brand-sub{font-size:.82rem;opacity:.8}
+.top-contact{font-size:.85rem;opacity:.85}
+nav.tabs{background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.12);position:sticky;top:0;z-index:20}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;align-items:center}
+nav.tabs .wrap::-webkit-scrollbar{display:none}
+nav.tabs a{color:#D7DBF5;text-decoration:none;padding:12px 12px;font-weight:600;font-size:.94rem;white-space:nowrap;border-bottom:3px solid transparent}
+nav.tabs a:hover{color:#fff}
+nav.tabs a[aria-current="page"]{color:#fff;border-bottom-color:var(--gold)}
+nav.tabs a.nav-cta{background:var(--gold);color:var(--gold-ink);border-radius:8px;padding:7px 12px;margin-left:auto;border-bottom:0}
+nav.tabs a.nav-cta[aria-current="page"]{box-shadow:0 0 0 2px #fff inset}
+nav.tabs a.admin-tab{color:var(--gold)}
+
+section.view{display:none}
+section.view.active{display:block}
+.status-banner{padding-top:18px}
+
+/* Botões e formulários */
+.btn{appearance:none;border:1px solid transparent;border-radius:10px;padding:11px 18px;font:600 .98rem var(--font-body);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;line-height:1.2}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.band.dark .btn-ghost{border-color:rgba(255,255,255,.35);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.88rem;border-radius:8px}
+.btn-danger{background:transparent;border-color:var(--bad);color:var(--bad)}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.form-grid .full{grid-column:1/-1}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+.fs-title{font-family:var(--font-display);font-weight:700;font-size:1.05rem;margin:6px 0 2px;grid-column:1/-1;padding-top:14px;border-top:1px solid var(--line)}
+.fs-title:first-child{border-top:0;padding-top:0}
+label.lbl,legend.lbl{display:block;font-weight:600;font-size:.93rem;margin-bottom:6px}
+.req{color:var(--bad)}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=url],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit;font-size:1rem}
+textarea{min-height:96px;resize:vertical}
+.hint{font-size:.84rem;color:var(--muted);margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip-input{position:relative}
+.chip-input input{position:absolute;opacity:0;pointer-events:none}
+.chip-input span{display:inline-block;padding:7px 13px;border:1px solid var(--line);border-radius:999px;font-size:.92rem;cursor:pointer;background:var(--bg);user-select:none}
+.chip-input input:checked + span{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip-input input:focus-visible + span{outline:3px solid var(--gold);outline-offset:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+.check input{margin-top:5px;width:18px;height:18px;flex:none}
+.form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.notice{border-radius:10px;padding:12px 14px;font-size:.95rem}
+.notice.ok{background:var(--ok-bg);color:var(--ok)}
+.notice.bad{background:var(--bad-bg);color:var(--bad)}
+.notice.info{background:var(--info-bg);color:var(--info)}
+.notice.warn{background:var(--warn-bg);color:var(--warn)}
+.two-col{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+.aside{display:flex;flex-direction:column;gap:14px;position:sticky;top:64px}
+.aside .card h3{margin-bottom:8px}
+ul.clean{margin:8px 0 0;padding-left:18px}
+ul.clean li{margin-bottom:5px}
+
+/* Pílulas e ODS */
+.pill{display:inline-block;font-size:.76rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)} .pill.info{background:var(--info-bg);color:var(--info)}
+.pill.gold{background:var(--gold);color:var(--gold-ink)}
+.ods{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;border-radius:6px;padding:2px 7px 2px 2px;background:var(--surface-2);color:var(--ink)}
+.ods b{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:4px;color:#fff;font-size:.74rem;padding:0 3px}
+.ods-row{display:flex;flex-wrap:wrap;gap:5px}
+
+/* Início */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:stretch}
+.hero-text{display:flex;flex-direction:column;gap:16px;justify-content:center}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%, var(--gold) 62%);color:inherit;padding:0 2px}
+.band.dark .hero h1 em{background:none;color:var(--gold)}
+.hero-lead{font-size:1.1rem;max-width:58ch}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;min-height:300px}
+.hero-card canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+.hero-card > *:not(canvas){position:relative}
+.hero-card h3{color:var(--gold)}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:auto}
+.stat{background:rgba(10,14,40,.45);border-radius:10px;padding:12px 14px}
+.stat b{display:block;font-family:var(--font-display);font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:.82rem;opacity:.9}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.quick a{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px;transition:transform .15s,border-color .15s}
+.quick a:hover{transform:translateY(-2px);border-color:var(--accent)}
+.quick .q-ico{width:40px;height:40px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center}
+.quick svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.benefit{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:6px}
+.benefit .num{font-family:var(--font-display);font-weight:800;color:var(--gold);font-size:1.4rem;line-height:1;-webkit-text-stroke:.6px #8A6A15}
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;counter-reset:j}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:6px;position:relative}
+.step-n{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--gold-ink);font-weight:800;display:grid;place-items:center;font-family:var(--font-display)}
+.agenda{display:flex;flex-direction:column;gap:10px}
+.ag-item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.ag-date{background:var(--navy);color:#fff;border-radius:10px;text-align:center;padding:6px 4px;line-height:1.1}
+.ag-date b{display:block;font-family:var(--font-display);font-size:1.4rem}
+.ag-date span{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gold)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.feature{border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:12px}
+.feature.navy{background:var(--navy);color:#fff}
+.feature.navy .muted{color:#D2D6F2}
+.feature.gold{background:var(--gold);color:var(--gold-ink)}
+.feature.gold .muted{color:#5A4510}
+.feature ul{margin:0;padding-left:18px}
+.feature .btn-ghost{border-color:currentColor;color:inherit}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 16px;margin-bottom:8px}
+.faq summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq summary::after{content:"+";font-family:var(--font-display);font-size:1.3rem;line-height:1;color:var(--accent)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 14px;color:var(--muted)}
+.cta-final{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+
+/* Cartões */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.seg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.seg{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:8px;border-top:4px solid var(--seg-color,var(--navy))}
+.seg-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2)}
+.seg-icon svg{width:22px;height:22px;stroke:var(--seg-color,var(--navy));fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.seg ul{margin:0;padding-left:18px;font-size:.93rem;color:var(--muted)}
+.opp{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:10px}
+.opp-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;color:var(--muted)}
+.opp-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filters .flabel{font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+.filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 13px;border-radius:999px;font:600 .88rem var(--font-body);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.empty{border:1px dashed var(--line);border-radius:var(--radius);padding:22px;text-align:center;color:var(--muted)}
+.cap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:10px;border-left:5px solid var(--gold)}
+.cap.talk{border-left-color:var(--blue)}
+.trilha{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.trilha > div{padding:18px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.trilha > div:last-child{border-right:0}
+.trilha .t-n{font-family:var(--font-display);font-weight:800;color:var(--blue);font-size:.85rem;letter-spacing:.06em;text-transform:uppercase}
+.selos{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.selo{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:center}
+.selo svg{width:44px;height:44px;flex:none}
+.selo.me{border-color:var(--gold);box-shadow:inset 0 0 0 2px var(--gold)}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.role{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:4px}
+.story-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px}
+.story blockquote{margin:0;font-size:1.02rem;border-left:3px solid var(--gold);padding-left:14px}
+.story footer{font-size:.88rem;color:var(--muted)}
+.ext{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:8px}
+.ext dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:0;font-size:.9rem}
+.ext dt{font-weight:700;color:var(--muted)}
+.ext dd{margin:0}
+.ext .ext-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.compare td:first-child{font-weight:700;white-space:nowrap}
+
+/* Painel */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.kpi b{display:block;font-family:var(--font-display);font-size:1.6rem;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.82rem;color:var(--muted)}
+.kpi.attn{border-color:var(--gold);box-shadow:inset 4px 0 0 var(--gold)}
+.subtabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:16px}
+.subtabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px;font:600 .95rem var(--font-body);color:var(--muted);cursor:pointer;white-space:nowrap}
+.subtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--gold)}
+.subtabs .count{font-size:.75rem;background:var(--surface-2);border-radius:999px;padding:1px 7px;margin-left:4px;color:var(--ink)}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+.toolbar{display:grid;grid-template-columns:2fr repeat(5,1fr);gap:8px;margin-bottom:12px}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+td .tags{display:flex;flex-wrap:wrap;gap:4px}
+td select,td input{padding:6px 8px;font-size:.88rem;min-width:110px}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.detail-row td{background:var(--surface-2)}
+.detail{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:.9rem}
+.detail dt,.review dt{font-weight:700;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.detail dd,.review dd{margin:2px 0 0}
+.review-list{display:flex;flex-direction:column;gap:12px}
+.review{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px}
+.review-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.review dl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 14px;margin:0;font-size:.9rem}
+
+/* Modal e aviso */
+.overlay{position:fixed;inset:0;background:rgba(10,12,30,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.overlay.open{display:flex}
+.modal{background:var(--surface);color:var(--ink);border-radius:16px;max-width:560px;width:100%;padding:22px;max-height:90%;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.modal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.93rem;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.show{opacity:1}
+footer.site{background:var(--navy-deep);color:#C9CEEC;padding:28px 0;font-size:.9rem}
+footer.site .wrap{display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px}
+footer.site h4{color:#fff;font-size:.95rem;margin-bottom:8px}
+footer.site a{color:#fff}
+footer.site ul{list-style:none;margin:0;padding:0}
+footer.site li{margin-bottom:4px}
+
+@media (max-width:980px){
+  .hero,.two-col,.split{grid-template-columns:1fr}
+  .aside{position:static}
+  .journey{grid-template-columns:repeat(2,1fr)}
+  .quick,.selos,.trilha{grid-template-columns:repeat(2,1fr)}
+  .trilha > div:nth-child(2){border-right:0}
+  .trilha > div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .benefits,.roles{grid-template-columns:repeat(2,1fr)}
+  .toolbar{grid-template-columns:1fr 1fr}
+  .detail,.review dl{grid-template-columns:1fr 1fr}
+  footer.site .wrap{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .form-grid,.journey,.quick,.benefits,.roles,.selos,.trilha{grid-template-columns:1fr}
+  .trilha > div{border-right:0;border-bottom:1px solid var(--line)}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .detail,.review dl{grid-template-columns:1fr}
+  .ag-item{grid-template-columns:56px 1fr}
+  .ag-item .btn{grid-column:1/-1}
+  body{font-size:16px}
+  .band{padding:32px 0}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#inicio">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2B3A82" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M9 11h6M12 8v6"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Portal de Voluntariado UCSAL</div>
+        <div class="brand-sub">CAEX · Pró-Reitoria de Graduação, Extensão e Ação Comunitária</div>
+      </div>
+    </a>
+    <div class="top-contact">extensao@ucsal.br · WhatsApp (71) 9959-0535</div>
+  </div>
+</header>
+<nav class="tabs" aria-label="Seções do portal">
+  <div class="wrap" id="navTabs">
+    <a href="#inicio" data-view="inicio">Início</a>
+    <a href="#oportunidades" data-view="oportunidades">Oportunidades</a>
+    <a href="#formacao" data-view="formacao">Formação gratuita</a>
+    <a href="#monitoria" data-view="monitoria">Monitoria</a>
+    <a href="#explorar" data-view="explorar">Explorar o mundo</a>
+    <a href="#relatos" data-view="relatos">Relatos</a>
+    <a href="#indicar" data-view="indicar">Indicar local</a>
+    <a href="#equipe" data-view="equipe" class="admin-tab" id="adminTab" hidden>Painel CAEX</a>
+    <a href="#cadastro" data-view="cadastro" class="nav-cta">Quero ser voluntário</a>
+  </div>
+</nav>
+
+<div class="wrap status-banner" id="statusBanner" hidden></div>
+
+<main>
+<!-- ================= INÍCIO ================= -->
+<section class="view" id="view-inicio" aria-labelledby="t-inicio">
+  <div class="band dark">
+    <div class="wrap hero">
+      <div class="hero-text">
+        <span class="eyebrow">Extensão e ação comunitária</span>
+        <h1 id="t-inicio">Seu tempo e seu talento podem <em>transformar realidades</em> em Salvador, na Bahia e no mundo.</h1>
+        <p class="hero-lead muted">Um só lugar para conhecer as frentes de voluntariado da UCSAL, fazer formação gratuita, servir como monitor em eventos, partilhar experiências e descobrir programas no Brasil e no exterior.</p>
+        <div class="hero-actions">
+          <a class="btn btn-gold" href="#cadastro">Quero ser voluntário</a>
+          <a class="btn btn-ghost" href="#oportunidades">Ver oportunidades abertas</a>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="O voluntariado da UCSAL em números">
+        <canvas id="heroCanvas" aria-hidden="true"></canvas>
+        <h3>O voluntariado da UCSAL em números</h3>
+        <p class="small" id="statUpdated">Números consolidados pela equipe do CAEX.</p>
+        <div class="stat-grid">
+          <div class="stat"><b id="stVol">—</b><span>voluntários no banco</span></div>
+          <div class="stat"><b id="stHoras">—</b><span>horas de serviço certificadas</span></div>
+          <div class="stat"><b id="stOpp">0</b><span>oportunidades abertas</span></div>
+          <div class="stat"><b id="stInst">—</b><span>instituições na rede</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <div class="quick">
+        <a href="#oportunidades"><div class="q-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>Oportunidades</b><span class="small muted">Chamadas abertas por frente, ODS e modalidade.</span></a>
+        <a href="#formacao"><div class="q-ico"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg></div><b>Formação gratuita</b><span class="small muted">Trilha do voluntário e encontros Voluntalks.</span></a>
+        <a href="#monitoria"><div class="q-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M17 4l2 2 3-3"/></svg></div><b>Monitoria voluntária</b><span class="small muted">Atue em eventos e agende uma conversa com o CAEX.</span></a>
+        <a href="#explorar"><div class="q-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></div><b>Explorar o mundo</b><span class="small muted">Programas na Bahia, no Brasil e no exterior.</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Por que ser voluntário</span>
+        <h2>Servir também forma</h2>
+        <p class="muted narrow">O voluntariado amplia a formação acadêmica, aproxima a universidade da comunidade e traduz em gestos concretos a identidade comunitária e católica da UCSAL.</p>
+      </div>
+      <div class="benefits">
+        <div class="benefit"><span class="num">01</span><h3>Competências para a vida</h3><p class="small muted">Liderança, comunicação, trabalho em equipe e planejamento desenvolvidos em situações reais.</p></div>
+        <div class="benefit"><span class="num">02</span><h3>Rede de contatos</h3><p class="small muted">Conviva com profissionais, instituições e colegas de outros cursos. Indicações e cartas de recomendação nascem daí.</p></div>
+        <div class="benefit"><span class="num">03</span><h3>Descoberta vocacional</h3><p class="small muted">Experimente áreas e tarefas que talvez não apareceriam em um estágio e conheça melhor seu perfil.</p></div>
+        <div class="benefit"><span class="num">04</span><h3>Currículo e LinkedIn</h3><p class="small muted">Experiências voluntárias têm valor profissional. Registre-as no currículo e na seção própria do LinkedIn.</p></div>
+        <div class="benefit"><span class="num">05</span><h3>Horas certificadas</h3><p class="small muted">A participação registrada pelo CAEX pode ser aproveitada como atividade complementar ou de extensão, conforme o curso.</p></div>
+        <div class="benefit"><span class="num">06</span><h3>Fé que se faz serviço</h3><p class="small muted">Cidadania ativa e cuidado com o próximo, em sintonia com a Agenda 2030 e a Doutrina Social da Igreja.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Como funciona</span>
+        <h2>Sua jornada como voluntário</h2>
+      </div>
+      <div class="journey">
+        <div class="step"><div class="step-n">1</div><h3>Cadastre-se</h3><p class="small muted">Informe contato, disponibilidade e como quer contribuir.</p></div>
+        <div class="step"><div class="step-n">2</div><h3>Forme-se</h3><p class="small muted">Faça a trilha gratuita do voluntário e as formações específicas.</p></div>
+        <div class="step"><div class="step-n">3</div><h3>Seja convocado</h3><p class="small muted">Receba convites compatíveis com seu perfil. Aceitar é opcional.</p></div>
+        <div class="step"><div class="step-n">4</div><h3>Sirva</h3><p class="small muted">Atue com acompanhamento da equipe responsável pela ação.</p></div>
+        <div class="step"><div class="step-n">5</div><h3>Partilhe e certifique</h3><p class="small muted">Conte sua experiência, acumule horas e conquiste seus selos.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head row">
+        <div><span class="eyebrow">Agenda</span><h2>Próximas ações e formações</h2></div>
+        <a class="btn btn-ghost btn-sm" href="#oportunidades">Ver todas</a>
+      </div>
+      <div class="agenda" id="agendaHome"><div class="empty">Carregando agenda…</div></div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap split">
+      <div class="feature navy">
+        <span class="eyebrow" style="color:var(--gold)">Monitoria voluntária</span>
+        <h2>Seja monitor nos eventos da UCSAL</h2>
+        <p class="muted">SEMOC, congressos, colações e aulas inaugurais contam com monitores na recepção, nas salas, no cerimonial e na comunicação.</p>
+        <div class="hero-actions"><a class="btn btn-gold" href="#monitoria">Conhecer a monitoria</a><a class="btn btn-ghost" href="#monitoria-reuniao">Agendar conversa</a></div>
+      </div>
+      <div class="feature gold">
+        <span class="eyebrow" style="color:#5A4510">Formação gratuita</span>
+        <h2>Prepare-se para servir bem</h2>
+        <p class="muted">Trilha do Voluntário UCSAL, formações específicas e o ciclo de conversas Voluntalks, abertos à comunidade e com certificado.</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#formacao">Ver formações</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Frentes de atuação</span>
+        <h2>Onde você pode servir</h2>
+        <p class="muted narrow">Oito frentes permanentes, cada uma ligada aos Objetivos de Desenvolvimento Sustentável (ODS) da ONU.</p>
+      </div>
+      <div class="seg-grid" id="segGrid"></div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head row">
+        <div><span class="eyebrow">Partilha</span><h2>Relatos de quem já serviu</h2></div>
+        <a class="btn btn-ghost btn-sm" href="#relatos">Ler e partilhar</a>
+      </div>
+      <div class="story-grid" id="storyHome"></div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="wrap faq">
+      <div class="section-head"><span class="eyebrow">Dúvidas frequentes</span><h2>Perguntas e respostas</h2></div>
+      <details><summary>Quem pode ser voluntário?</summary><p>Estudantes de graduação, pós-graduação e EAD, professores, técnicos, egressos e pessoas da comunidade externa. Menores de 18 anos participam apenas de ações específicas, com autorização do responsável.</p></details>
+      <details><summary>Preciso pagar alguma coisa?</summary><p>Não. As ações e as formações oferecidas pela UCSAL são gratuitas. Programas externos divulgados em "Explorar o mundo" têm regras próprias, e alguns cobram taxas.</p></details>
+      <details><summary>Recebo certificado?</summary><p>Sim. O CAEX registra suas horas a cada ação. O aproveitamento como atividade complementar ou de extensão depende do projeto pedagógico do seu curso e da validação da coordenação.</p></details>
+      <details><summary>Sou obrigado a aceitar os convites?</summary><p>Não. O cadastro serve para o CAEX saber quem procurar. Cada convite é uma possibilidade, e você decide se participa.</p></details>
+      <details><summary>O voluntariado gera vínculo de trabalho?</summary><p>Não. Pela Lei nº 9.608/1998, o serviço voluntário é não remunerado e não gera vínculo empregatício. Cada participação é formalizada por termo de adesão.</p></details>
+      <details><summary>Minha liga, atlética ou DA pode atuar como equipe?</summary><p>Pode e deve. Agende uma conversa com o CAEX na área de Monitoria para planejar a participação da entidade em ações e eventos.</p></details>
+      <details><summary>Como funcionam os programas no exterior?</summary><p>O portal apenas divulga programas de outras instituições. A inscrição é feita diretamente com elas. Se quiser orientação antes de decidir, agende uma conversa com o CAEX.</p></details>
+    </div>
+  </div>
+
+  <div class="band dark">
+    <div class="wrap cta-final">
+      <div><h2>Pronto para começar?</h2><p class="muted">O cadastro leva cerca de cinco minutos e vale para todas as ações.</p></div>
+      <a class="btn btn-gold" href="#cadastro">Fazer meu cadastro</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OPORTUNIDADES ================= -->
+<section class="view" id="view-oportunidades" aria-labelledby="t-opp">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Chamadas abertas</span>
+        <h2 id="t-opp">Oportunidades de voluntariado</h2>
+        <p class="muted narrow">Ações publicadas pela equipe do CAEX. Manifeste interesse e aguarde a confirmação pelo WhatsApp ou e-mail informados.</p>
+      </div>
+      <div class="filters" id="oppFilterSeg" role="group" aria-label="Filtrar por frente"></div>
+      <div class="filters" id="oppFilterMod" role="group" aria-label="Filtrar por modalidade"></div>
+      <div class="filters" id="oppFilterOds" role="group" aria-label="Filtrar por ODS"></div>
+      <div class="grid-cards" id="oppList" style="margin-top:8px"><div class="empty">Carregando oportunidades…</div></div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Frentes permanentes</span><h2>Conheça todas as frentes</h2></div>
+      <div class="seg-grid" id="segGrid2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FORMAÇÃO ================= -->
+<section class="view" id="view-formacao" aria-labelledby="t-form">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Capacitação gratuita</span>
+        <h2 id="t-form">Formação para voluntários</h2>
+        <p class="muted narrow">Formações abertas a estudantes, colaboradores e comunidade externa, com certificado. A trilha básica prepara para qualquer frente; as formações específicas preparam para funções como a monitoria em eventos.</p>
+      </div>
+      <div class="trilha" aria-label="Trilha do Voluntário UCSAL">
+        <div><span class="t-n">Módulo 1</span><h3>Ser voluntário</h3><p class="small muted">Sentido do voluntariado, direitos e deveres, Lei nº 9.608/1998 e postura ética.</p></div>
+        <div><span class="t-n">Módulo 2</span><h3>Agenda 2030 na prática</h3><p class="small muted">Os ODS como bússola das ações e o voluntariado como cidadania ativa.</p></div>
+        <div><span class="t-n">Módulo 3</span><h3>Escuta e acolhimento</h3><p class="small muted">Comunicação Não Violenta, respeito à dignidade e cuidado com as pessoas atendidas.</p></div>
+        <div><span class="t-n">Módulo 4</span><h3>Segurança e privacidade</h3><p class="small muted">Primeiros cuidados, uso de imagem, LGPD e conduta em campo.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Inscrições</span><h2>Formações e encontros</h2></div>
+      <div class="filters" id="capFilter" role="group" aria-label="Filtrar formações"></div>
+      <div class="grid-cards" id="capList"><div class="empty">Carregando formações…</div></div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Reconhecimento</span>
+        <h2>Selos do voluntário UCSAL</h2>
+        <p class="muted narrow">Cada hora de serviço registrada pelo CAEX conta para o seu selo. Os selos aparecem no seu cadastro e podem ser citados no currículo.</p>
+      </div>
+      <div class="selos" id="selos"></div>
+      <div id="meuSelo" style="margin-top:14px"></div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap two-col" style="grid-template-columns:1fr 1fr">
+      <div class="card">
+        <h3>Guia rápido do voluntário</h3>
+        <ul class="clean small">
+          <li>Confirme presença e avise com antecedência se não puder comparecer.</li>
+          <li>Participe da orientação antes de cada ação.</li>
+          <li>Respeite a privacidade das pessoas atendidas; fotos só com autorização.</li>
+          <li>Use a identificação da UCSAL durante as ações.</li>
+          <li>Registre sua presença com a equipe para o certificado.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Para o seu currículo</h3>
+        <ul class="clean small">
+          <li>Descreva a função, a instituição, o período e as horas certificadas.</li>
+          <li>Destaque as competências desenvolvidas, como liderança e comunicação.</li>
+          <li>No LinkedIn, use a seção de trabalho voluntário, logo após a formação.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MONITORIA ================= -->
+<section class="view" id="view-monitoria" aria-labelledby="t-mon">
+  <div class="band dark">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Programa de Monitoria Voluntária</span>
+        <h2 id="t-mon">Monitores fazem os eventos da UCSAL acontecerem</h2>
+        <p class="muted narrow">A monitoria voluntária reúne estudantes, ligas e entidades no apoio aos eventos acadêmicos e institucionais, como a SEMOC, congressos, colações e aulas inaugurais. É uma oportunidade de formação em organização de eventos, atendimento ao público e trabalho em equipe.</p>
+      </div>
+      <div class="hero-actions"><a class="btn btn-gold" href="#monitoria-reuniao">Agendar conversa com o CAEX</a><a class="btn btn-ghost" href="#cadastro">Entrar no banco de monitores</a></div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Funções</span><h2>Como um monitor pode atuar</h2></div>
+      <div class="roles">
+        <div class="role"><h3>Recepção e credenciamento</h3><p class="small muted">Acolhida dos participantes, entrega de materiais e controle de presença.</p></div>
+        <div class="role"><h3>Apoio às salas</h3><p class="small muted">Suporte a mesas, palestrantes e apresentações de trabalhos, com controle de tempo.</p></div>
+        <div class="role"><h3>Orientação e acessibilidade</h3><p class="small muted">Informação ao público, condução pelos espaços e atenção a pessoas com deficiência.</p></div>
+        <div class="role"><h3>Cerimonial e protocolo</h3><p class="small muted">Apoio a aberturas, mesas de honra e colações, em diálogo com o cerimonial.</p></div>
+        <div class="role"><h3>Comunicação e cobertura</h3><p class="small muted">Fotos, vídeos curtos e textos para os canais da universidade, com orientação da ASCOM.</p></div>
+        <div class="role"><h3>Apoio logístico</h3><p class="small muted">Organização de espaços, materiais, coffee break e montagem.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Percurso</span><h2>Do cadastro ao certificado</h2></div>
+      <div class="journey" style="grid-template-columns:repeat(4,1fr)">
+        <div class="step"><div class="step-n">1</div><h3>Cadastro</h3><p class="small muted">Marque a frente "Eventos acadêmicos e institucionais".</p></div>
+        <div class="step"><div class="step-n">2</div><h3>Formação</h3><p class="small muted">Faça a formação "Monitoria em eventos acadêmicos".</p></div>
+        <div class="step"><div class="step-n">3</div><h3>Escala</h3><p class="small muted">Receba a escala por turnos, conforme sua disponibilidade.</p></div>
+        <div class="step"><div class="step-n">4</div><h3>Certificado</h3><p class="small muted">Horas registradas pelo CAEX ao final do evento.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="band" id="monitoria-reuniao">
+    <div class="wrap two-col">
+      <form class="card" id="formReuniao" novalidate>
+        <h2 style="margin-bottom:6px">Agendar conversa sobre monitoria</h2>
+        <p class="small muted" style="margin-bottom:16px">Indique duas preferências de data e horário. A equipe do CAEX confirma pelo WhatsApp ou e-mail.</p>
+        <div class="form-grid">
+          <div class="full"><label class="lbl" for="m-nome">Nome completo <span class="req">*</span></label><input type="text" id="m-nome" autocomplete="name"></div>
+          <div><label class="lbl" for="m-tel">WhatsApp <span class="req">*</span></label><input type="tel" id="m-tel" placeholder="(71) 9 0000-0000"></div>
+          <div><label class="lbl" for="m-email">E-mail <span class="req">*</span></label><input type="email" id="m-email"></div>
+          <div><label class="lbl" for="m-perfil">Você é <span class="req">*</span></label>
+            <select id="m-perfil"><option value="">Selecione</option><option>Estudante interessado em ser monitor</option><option>Representante de liga, atlética ou DA</option><option>Professor ou coordenação organizando evento</option><option>Instituição externa</option></select></div>
+          <div><label class="lbl" for="m-assunto">Assunto <span class="req">*</span></label>
+            <select id="m-assunto"><option value="">Selecione</option><option>Quero ser monitor voluntário</option><option>Minha entidade quer atuar como equipe</option><option>Preciso de monitores para um evento</option><option>Parceria e voluntariado institucional</option><option>Orientação sobre voluntariado no exterior</option></select></div>
+          <div class="full" id="m-evento-wrap" hidden><label class="lbl" for="m-evento">Evento, data prevista e número estimado de monitores</label><input type="text" id="m-evento" placeholder="Ex.: Jornada de Psicologia, 20/03, cerca de 15 monitores"></div>
+          <div><label class="lbl" for="m-d1">1ª preferência de data <span class="req">*</span></label><input type="date" id="m-d1"></div>
+          <div><label class="lbl" for="m-t1">Turno</label><select id="m-t1"><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+          <div><label class="lbl" for="m-d2">2ª preferência de data</label><input type="date" id="m-d2"></div>
+          <div><label class="lbl" for="m-t2">Turno</label><select id="m-t2"><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+          <fieldset class="full"><legend class="lbl">Formato</legend>
+            <div class="chips">
+              <label class="chip-input"><input type="radio" name="m-formato" value="On-line" checked><span>On-line (Google Meet)</span></label>
+              <label class="chip-input"><input type="radio" name="m-formato" value="Presencial"><span>Presencial no CAEX</span></label>
+            </div></fieldset>
+          <div class="full"><label class="lbl" for="m-msg">O que você gostaria de conversar?</label><textarea id="m-msg"></textarea></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary">Solicitar conversa</button></div>
+        <div id="reuMsg" style="margin-top:12px"></div>
+      </form>
+      <div class="aside">
+        <div class="card"><h3>Para organizadores de eventos</h3><p class="small muted">Coordenações e professores podem solicitar monitores com antecedência mínima de 30 dias. O CAEX convoca o banco de voluntários e prepara a escala.</p></div>
+        <div class="card"><h3>Para ligas e entidades</h3><p class="small muted">A atuação como equipe em eventos fortalece o eixo de extensão das ligas e conta como ação comunitária da entidade.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPLORAR ================= -->
+<section class="view" id="view-explorar" aria-labelledby="t-exp">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Voluntariado além da UCSAL</span>
+        <h2 id="t-exp">Explorar o mundo</h2>
+        <p class="muted narrow">Programas de outras instituições na Bahia, no Brasil e no exterior, incluindo iniciativas de inspiração católica. A inscrição é feita diretamente com cada instituição; valores e requisitos podem mudar, por isso confira sempre o site oficial.</p>
+      </div>
+      <div class="filters" id="extFilter" role="group" aria-label="Filtrar programas"></div>
+      <div class="grid-cards" id="extList"></div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow">Comparativo</span><h2>Plataformas internacionais lado a lado</h2></div>
+      <div class="table-wrap"><table class="compare">
+        <thead><tr><th>Plataforma</th><th>Modelo de atuação</th><th>Público e requisitos</th><th>Benefícios e custos</th></tr></thead>
+        <tbody id="compareBody"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="wrap split">
+      <div class="card">
+        <h3>Antes de viajar como voluntário</h3>
+        <ul class="clean small">
+          <li>Pesquise a reputação da organização e leia relatos de outros voluntários.</li>
+          <li>Entenda o que está incluído na taxa: hospedagem, alimentação, seguro, suporte local.</li>
+          <li>Verifique vistos, vacinas e seguro-saúde internacional.</li>
+          <li>Desconfie de programas com crianças que não exigem formação nem verificação de antecedentes.</li>
+          <li>Combine com sua coordenação se a experiência poderá contar como horas de extensão.</li>
+        </ul>
+      </div>
+      <div class="feature navy">
+        <h3 style="color:var(--gold)">Quer orientação?</h3>
+        <p class="muted">A equipe do CAEX conversa com você sobre objetivos, segurança e aproveitamento acadêmico antes de você se inscrever.</p>
+        <div><a class="btn btn-gold" href="#monitoria-reuniao">Agendar conversa</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RELATOS ================= -->
+<section class="view" id="view-relatos" aria-labelledby="t-rel">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Partilha de experiências</span>
+        <h2 id="t-rel">Relatos de voluntariado</h2>
+        <p class="muted narrow">Histórias de quem já serviu com a UCSAL. Cada relato passa pela revisão do CAEX antes de ser publicado.</p>
+      </div>
+      <div class="story-grid" id="storyGrid"><div class="empty">Carregando relatos…</div></div>
+    </div>
+  </div>
+  <div class="band alt">
+    <div class="wrap">
+      <div class="section-head"><h2>Partilhe sua experiência</h2></div>
+      <form class="card" id="formRelato" novalidate style="max-width:860px">
+        <div class="form-grid">
+          <div><label class="lbl" for="r-nome">Seu nome <span class="req">*</span></label><input type="text" id="r-nome"></div>
+          <div><label class="lbl" for="r-curso">Curso ou vínculo</label><input type="text" id="r-curso" placeholder="Ex.: Psicologia, 6º semestre"></div>
+          <div><label class="lbl" for="r-inic">Iniciativa ou ação <span class="req">*</span></label><input type="text" id="r-inic" placeholder="Ex.: Monitoria na SEMOC"></div>
+          <div><label class="lbl" for="r-quando">Quando aconteceu</label><input type="text" id="r-quando" placeholder="Ex.: outubro de 2026"></div>
+          <div class="full"><label class="lbl" for="r-titulo">Título do relato <span class="req">*</span></label><input type="text" id="r-titulo" placeholder="Uma frase que resuma a experiência"></div>
+          <div class="full"><label class="lbl" for="r-texto">Seu relato <span class="req">*</span></label><textarea id="r-texto" style="min-height:140px" placeholder="O que você fez, o que aprendeu e o que levou para sua formação."></textarea><div class="hint">Entre 300 e 1.500 caracteres funciona bem.</div></div>
+          <label class="check full"><input type="checkbox" id="r-autoriza" checked><span>Autorizo a publicação do relato com meu nome no portal e nos canais da UCSAL.</span></label>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary">Enviar para revisão</button></div>
+        <div id="relMsg" style="margin-top:12px"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INDICAR ================= -->
+<section class="view" id="view-indicar" aria-labelledby="t-ind">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Ampliar a rede</span>
+        <h2 id="t-ind">Indicar um local ou cadastrar uma instituição</h2>
+        <p class="muted narrow">Comunidades, paróquias, escolas, ONGs e serviços públicos podem receber ações da UCSAL. Instituições também podem se apresentar diretamente. O CAEX analisa cada caso quanto à segurança, à pertinência formativa e à possibilidade de parceria.</p>
+      </div>
+      <div class="two-col">
+        <form class="card" id="formIndicacao" novalidate>
+          <div class="form-grid">
+            <div class="fs-title">Sobre o local</div>
+            <div class="full"><label class="lbl" for="i-inst">Nome da instituição ou comunidade <span class="req">*</span></label><input type="text" id="i-inst"></div>
+            <div><label class="lbl" for="i-tipo">Tipo <span class="req">*</span></label>
+              <select id="i-tipo"><option value="">Selecione</option><option>ONG / associação</option><option>Comunidade / bairro</option><option>Paróquia / obra social</option><option>Escola</option><option>Hospital / unidade de saúde</option><option>Abrigo / casa de acolhimento</option><option>Órgão público</option><option>Outro</option></select></div>
+            <div><label class="lbl" for="i-causa">Causa principal</label>
+              <select id="i-causa"><option value="">Selecione</option><option>Educação</option><option>Saúde</option><option>Assistência social</option><option>Crianças e adolescentes</option><option>Pessoas idosas</option><option>Migrantes e refugiados</option><option>Meio ambiente</option><option>Cultura</option><option>Direitos humanos</option></select></div>
+            <div><label class="lbl" for="i-local">Bairro e cidade <span class="req">*</span></label><input type="text" id="i-local" placeholder="Ex.: Pituaçu, Salvador"></div>
+            <div><label class="lbl" for="i-end">Endereço (se souber)</label><input type="text" id="i-end"></div>
+            <div><label class="lbl" for="i-resp">Pessoa de contato no local</label><input type="text" id="i-resp"></div>
+            <div><label class="lbl" for="i-respcont">Telefone ou e-mail do local</label><input type="text" id="i-respcont"></div>
+            <div class="full"><label class="lbl" for="i-nec">De que tipo de apoio o local precisa? <span class="req">*</span></label><textarea id="i-nec" placeholder="Ex.: reforço escolar no contraturno, mutirão de limpeza, apoio em eventos."></textarea></div>
+            <div class="full"><label class="lbl" for="i-motivo">Por que você indica este local?</label><textarea id="i-motivo"></textarea></div>
+            <div class="fs-title">Sobre você</div>
+            <div><label class="lbl" for="i-nome">Seu nome <span class="req">*</span></label><input type="text" id="i-nome"></div>
+            <div><label class="lbl" for="i-contato">Seu WhatsApp ou e-mail <span class="req">*</span></label><input type="text" id="i-contato"></div>
+            <div class="full"><label class="lbl" for="i-rel">Sua relação com o local</label>
+              <select id="i-rel"><option>Conheço o trabalho</option><option>Sou voluntário(a) lá</option><option>Sou responsável pela instituição</option><option>Moro na comunidade</option></select></div>
+          </div>
+          <div class="form-actions"><button type="submit" class="btn btn-primary">Enviar indicação</button></div>
+          <div id="indMsg" style="margin-top:12px"></div>
+        </form>
+        <div class="aside">
+          <div class="card">
+            <h3>Como o CAEX analisa</h3>
+            <ul class="clean small">
+              <li><b>Recebida:</b> a indicação entra na fila da equipe.</li>
+              <li><b>Em análise:</b> contato com o local e visita, quando necessário.</li>
+              <li><b>Aprovada:</b> o local passa a receber chamadas de voluntários.</li>
+              <li><b>Parceria formalizada:</b> termo de cooperação, observados os fluxos institucionais.</li>
+            </ul>
+          </div>
+          <div class="card"><h3>Rede atual do CAEX</h3><p class="small muted" id="parceirosTxt"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CADASTRO ================= -->
+<section class="view" id="view-cadastro" aria-labelledby="t-cad">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Banco de voluntários</span>
+        <h2 id="t-cad">Quero ser voluntário</h2>
+        <p class="muted narrow">Seu cadastro entra no banco de voluntários do CAEX. Quando houver uma ação compatível com sua disponibilidade e seu perfil, entraremos em contato.</p>
+      </div>
+      <div class="two-col">
+        <form class="card" id="formCadastro" novalidate>
+          <div id="cadModeNote"></div>
+          <div class="form-grid">
+            <div class="fs-title">1. Seus dados</div>
+            <div class="full"><label class="lbl" for="c-nome">Nome completo <span class="req">*</span></label><input type="text" id="c-nome" name="nome" autocomplete="name"></div>
+            <div><label class="lbl" for="c-tel">Telefone / WhatsApp <span class="req">*</span></label><input type="tel" id="c-tel" name="telefone" placeholder="(71) 9 0000-0000" autocomplete="tel"></div>
+            <div><label class="lbl" for="c-email">E-mail <span class="req">*</span></label><input type="email" id="c-email" name="email" autocomplete="email"></div>
+            <div><label class="lbl" for="c-vinculo">Vínculo com a UCSAL <span class="req">*</span></label>
+              <select id="c-vinculo" name="vinculo"><option value="">Selecione</option><option>Estudante de graduação</option><option>Estudante de pós-graduação</option><option>Estudante EAD</option><option>Professor(a)</option><option>Técnico(a) administrativo(a)</option><option>Egresso(a)</option><option>Comunidade externa</option></select></div>
+            <div><label class="lbl" for="c-curso">Curso e semestre</label><input type="text" id="c-curso" name="curso" placeholder="Ex.: Enfermagem, 4º semestre"></div>
+            <div class="fs-title">2. Entidades estudantis</div>
+            <fieldset class="full"><legend class="lbl">Você participa de alguma liga acadêmica? <span class="req">*</span></legend>
+              <div class="chips"><label class="chip-input"><input type="radio" name="liga" value="sim"><span>Sim</span></label><label class="chip-input"><input type="radio" name="liga" value="nao"><span>Não</span></label></div></fieldset>
+            <div class="full" id="ligaNomeWrap" hidden><label class="lbl" for="c-liganome">Qual liga? E qual sua função?</label><input type="text" id="c-liganome" name="ligaNome" placeholder="Ex.: LAOPE, diretor(a) de extensão"></div>
+            <fieldset class="full"><legend class="lbl">Outras entidades de que participa</legend>
+              <div class="chips" data-group="entidades">
+                <label class="chip-input"><input type="checkbox" value="Atlética"><span>Atlética</span></label><label class="chip-input"><input type="checkbox" value="DA/CA"><span>DA / CA</span></label><label class="chip-input"><input type="checkbox" value="DCE"><span>DCE</span></label><label class="chip-input"><input type="checkbox" value="Empresa Júnior"><span>Empresa Júnior</span></label><label class="chip-input"><input type="checkbox" value="Pastoral / grupo de fé"><span>Pastoral / grupo de fé</span></label><label class="chip-input"><input type="checkbox" value="Projeto de extensão"><span>Projeto de extensão</span></label>
+              </div></fieldset>
+            <div class="fs-title">3. Disponibilidade</div>
+            <fieldset class="full"><legend class="lbl">Dias disponíveis <span class="req">*</span></legend>
+              <div class="chips" data-group="dias">
+                <label class="chip-input"><input type="checkbox" value="Seg"><span>Seg</span></label><label class="chip-input"><input type="checkbox" value="Ter"><span>Ter</span></label><label class="chip-input"><input type="checkbox" value="Qua"><span>Qua</span></label><label class="chip-input"><input type="checkbox" value="Qui"><span>Qui</span></label><label class="chip-input"><input type="checkbox" value="Sex"><span>Sex</span></label><label class="chip-input"><input type="checkbox" value="Sáb"><span>Sáb</span></label><label class="chip-input"><input type="checkbox" value="Dom"><span>Dom</span></label>
+              </div></fieldset>
+            <fieldset class="full"><legend class="lbl">Turnos <span class="req">*</span></legend>
+              <div class="chips" data-group="turnos"><label class="chip-input"><input type="checkbox" value="Manhã"><span>Manhã</span></label><label class="chip-input"><input type="checkbox" value="Tarde"><span>Tarde</span></label><label class="chip-input"><input type="checkbox" value="Noite"><span>Noite</span></label></div></fieldset>
+            <div><label class="lbl" for="c-horas">Horas por mês que pode dedicar</label>
+              <select id="c-horas" name="horasMes"><option value="">Selecione</option><option>Até 4h</option><option>De 4h a 8h</option><option>De 8h a 16h</option><option>Mais de 16h</option><option>Apenas ações pontuais</option></select></div>
+            <div><label class="lbl" for="c-modal">Modalidade</label>
+              <select id="c-modal" name="modalidade"><option>Presencial</option><option>A distância</option><option selected>Presencial e a distância</option></select></div>
+            <div class="fs-title">4. Como você pode contribuir</div>
+            <fieldset class="full"><legend class="lbl">Frentes de interesse <span class="req">*</span></legend><div class="chips" data-group="areas" id="areasChips"></div></fieldset>
+            <fieldset class="full"><legend class="lbl">Habilidades que pode oferecer</legend>
+              <div class="chips" data-group="habilidades">
+                <label class="chip-input"><input type="checkbox" value="Recepção e credenciamento"><span>Recepção e credenciamento</span></label><label class="chip-input"><input type="checkbox" value="Comunicação e redes sociais"><span>Comunicação e redes sociais</span></label><label class="chip-input"><input type="checkbox" value="Fotografia e vídeo"><span>Fotografia e vídeo</span></label><label class="chip-input"><input type="checkbox" value="Design"><span>Design</span></label><label class="chip-input"><input type="checkbox" value="Aulas e reforço escolar"><span>Aulas e reforço escolar</span></label><label class="chip-input"><input type="checkbox" value="Saúde e acolhimento"><span>Saúde e acolhimento</span></label><label class="chip-input"><input type="checkbox" value="Tecnologia e informática"><span>Tecnologia e informática</span></label><label class="chip-input"><input type="checkbox" value="Idiomas e Libras"><span>Idiomas e Libras</span></label><label class="chip-input"><input type="checkbox" value="Música e arte"><span>Música e arte</span></label><label class="chip-input"><input type="checkbox" value="Logística e organização"><span>Logística e organização</span></label><label class="chip-input"><input type="checkbox" value="Orientação jurídica"><span>Orientação jurídica</span></label><label class="chip-input"><input type="checkbox" value="Escuta e apoio pastoral"><span>Escuta e apoio pastoral</span></label>
+              </div></fieldset>
+            <fieldset class="full"><legend class="lbl">Tem interesse em</legend>
+              <div class="chips" data-group="interesses">
+                <label class="chip-input"><input type="checkbox" value="Monitoria em eventos"><span>Monitoria em eventos</span></label><label class="chip-input"><input type="checkbox" value="Formações gratuitas"><span>Formações gratuitas</span></label><label class="chip-input"><input type="checkbox" value="Voluntariado no exterior"><span>Voluntariado no exterior</span></label><label class="chip-input"><input type="checkbox" value="Liderar uma ação"><span>Liderar uma ação</span></label>
+              </div></fieldset>
+            <div class="full"><label class="lbl" for="c-contrib">Conte, com suas palavras, como gostaria de contribuir <span class="req">*</span></label><textarea id="c-contrib" name="contribuicao" placeholder="Ex.: Tenho experiência com crianças e gostaria de apoiar oficinas aos sábados."></textarea></div>
+            <div class="full"><label class="lbl" for="c-exp">Já atuou como voluntário? Onde?</label><input type="text" id="c-exp" name="experiencia" placeholder="Ex.: Pastoral da Criança, TETO, OSID"></div>
+            <fieldset class="full"><legend class="lbl">Já é cadastrado(a) na plataforma Bahia. Estado Voluntário?</legend>
+              <div class="chips"><label class="chip-input"><input type="radio" name="bahiaVoluntario" value="sim"><span>Sim</span></label><label class="chip-input"><input type="radio" name="bahiaVoluntario" value="nao" checked><span>Não</span></label></div></fieldset>
+            <div class="fs-title">5. Termo e privacidade</div>
+            <label class="check full"><input type="checkbox" id="c-whats" checked><span>Aceito receber convocações e avisos do CAEX pelo WhatsApp e por e-mail.</span></label>
+            <label class="check full"><input type="checkbox" id="c-termo"><span>Declaro estar ciente de que o serviço voluntário não gera vínculo empregatício nem obrigação trabalhista, nos termos da Lei nº 9.608/1998, e que a participação em cada ação será formalizada por termo de adesão. <span class="req">*</span></span></label>
+            <label class="check full"><input type="checkbox" id="c-lgpd"><span>Autorizo o uso dos meus dados pela UCSAL exclusivamente para a gestão do voluntariado, conforme a LGPD (Lei nº 13.709/2018). <span class="req">*</span></span></label>
+          </div>
+          <div class="form-actions"><button type="submit" class="btn btn-primary" id="cadSubmit">Enviar cadastro</button><button type="button" class="btn btn-ghost" id="cadReset">Limpar</button></div>
+          <div id="cadMsg" style="margin-top:12px"></div>
+        </form>
+        <div class="aside">
+          <div class="card"><h3>O que acontece depois</h3>
+            <ul class="clean small"><li>Seu perfil entra no banco de voluntários do CAEX.</li><li>Você recebe convites compatíveis com seu perfil. Aceitar é opcional.</li><li>Antes de cada ação, há orientação com a equipe responsável.</li><li>Suas horas são registradas para certificado e selos.</li></ul></div>
+          <div class="card"><h3>Integrantes de ligas</h3><p class="small muted">Ligas acadêmicas podem mobilizar seus membros como equipe nas ações do CAEX, fortalecendo o eixo de extensão previsto no Regimento das Ligas.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAINEL ================= -->
+<section class="view" id="view-equipe" aria-labelledby="t-eq">
+  <div class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Acesso restrito à equipe</span>
+        <h2 id="t-eq">Painel CAEX</h2>
+        <p class="muted narrow">Banco de voluntários, chamadas, formações, reuniões, relatos e indicações. Os dados desta área ficam visíveis apenas para editores do portal.</p>
+      </div>
+      <div id="adminLocked" class="notice info" hidden>Esta área é exclusiva da equipe do CAEX.</div>
+      <div id="adminBody" hidden>
+        <div class="kpis" id="kpis"></div>
+        <div class="subtabs" role="tablist" id="subtabs">
+          <button role="tab" data-panel="vol" aria-selected="true">Voluntários <span class="count" id="cnt-vol">0</span></button>
+          <button role="tab" data-panel="opp" aria-selected="false">Oportunidades <span class="count" id="cnt-opp">0</span></button>
+          <button role="tab" data-panel="int" aria-selected="false">Interessados <span class="count" id="cnt-int">0</span></button>
+          <button role="tab" data-panel="cap" aria-selected="false">Formações <span class="count" id="cnt-cap">0</span></button>
+          <button role="tab" data-panel="reu" aria-selected="false">Reuniões <span class="count" id="cnt-reu">0</span></button>
+          <button role="tab" data-panel="rel" aria-selected="false">Relatos <span class="count" id="cnt-rel">0</span></button>
+          <button role="tab" data-panel="ind" aria-selected="false">Indicações <span class="count" id="cnt-ind">0</span></button>
+          <button role="tab" data-panel="num" aria-selected="false">Números do portal</button>
+        </div>
+
+        <div class="admin-panel active" id="panel-vol">
+          <div class="toolbar">
+            <input type="text" id="f-busca" placeholder="Buscar por nome, curso, habilidade…" aria-label="Buscar voluntário">
+            <select id="f-dia" aria-label="Filtrar por dia"><option value="">Todos os dias</option><option>Seg</option><option>Ter</option><option>Qua</option><option>Qui</option><option>Sex</option><option>Sáb</option><option>Dom</option></select>
+            <select id="f-turno" aria-label="Filtrar por turno"><option value="">Todos os turnos</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select>
+            <select id="f-area" aria-label="Filtrar por frente"><option value="">Todas as frentes</option></select>
+            <select id="f-liga" aria-label="Filtrar por liga"><option value="">Liga: todos</option><option value="sim">Só ligantes</option><option value="nao">Sem liga</option></select>
+            <select id="f-status" aria-label="Filtrar por situação"><option value="">Todas as situações</option><option value="novo">Novo</option><option value="contatado">Contatado</option><option value="ativo">Ativo</option><option value="inativo">Inativo</option></select>
+          </div>
+          <div class="toolbar-actions">
+            <span class="small muted" id="volCount"></span>
+            <button class="btn btn-ghost btn-sm" id="copyCsv">Copiar planilha (CSV)</button>
+            <button class="btn btn-ghost btn-sm" id="copyEmails">Copiar e-mails</button>
+            <button class="btn btn-gold btn-sm" id="convocar">Montar convocação</button>
+            <a class="btn btn-primary btn-sm" href="#cadastro">Cadastrar voluntário</a>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Voluntário</th><th>Contato</th><th>Disponibilidade</th><th>Frentes</th><th>Liga</th><th>Situação</th><th>Horas</th><th></th></tr></thead>
+            <tbody id="volBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="admin-panel" id="panel-opp">
+          <form class="card" id="formOpp" novalidate style="margin-bottom:16px">
+            <h3 id="oppFormTitle" style="margin-bottom:12px">Nova oportunidade</h3>
+            <div class="form-grid">
+              <div class="full"><label class="lbl" for="o-titulo">Título <span class="req">*</span></label><input type="text" id="o-titulo" placeholder="Ex.: Monitoria na SEMOC 2027"></div>
+              <div><label class="lbl" for="o-seg">Frente <span class="req">*</span></label><select id="o-seg"></select></div>
+              <div><label class="lbl" for="o-mod">Modalidade</label><select id="o-mod"><option>Presencial</option><option>A distância</option><option>Híbrida</option></select></div>
+              <div><label class="lbl" for="o-dataiso">Data (para a agenda)</label><input type="date" id="o-dataiso"></div>
+              <div><label class="lbl" for="o-data">Data ou período, por extenso <span class="req">*</span></label><input type="text" id="o-data" placeholder="Ex.: 05/12/2026, 8h às 12h"></div>
+              <div><label class="lbl" for="o-local">Local</label><input type="text" id="o-local" placeholder="Ex.: Campus Pituaçu"></div>
+              <div><label class="lbl" for="o-turno">Turno</label><select id="o-turno"><option>Manhã</option><option>Tarde</option><option>Noite</option><option>Integral</option><option>Flexível</option></select></div>
+              <div><label class="lbl" for="o-vagas">Vagas</label><input type="number" id="o-vagas" min="1" placeholder="20"></div>
+              <div><label class="lbl" for="o-horas">Horas certificadas</label><input type="number" id="o-horas" min="0" placeholder="4"></div>
+              <fieldset class="full"><legend class="lbl">ODS relacionados</legend><div class="chips" data-group="o-ods" id="oOdsChips"></div></fieldset>
+              <div class="full"><label class="lbl" for="o-desc">Descrição e atribuições <span class="req">*</span></label><textarea id="o-desc"></textarea></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn btn-primary" id="oppSubmit">Publicar oportunidade</button><button type="button" class="btn btn-ghost" id="oppCancel" hidden>Cancelar edição</button></div>
+            <div id="oppMsg" style="margin-top:10px"></div>
+          </form>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Oportunidade</th><th>Frente</th><th>Data</th><th>Vagas</th><th>Interessados</th><th>Situação</th><th></th></tr></thead>
+            <tbody id="oppAdminBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="admin-panel" id="panel-int">
+          <div class="toolbar-actions"><select id="f-int-opp" aria-label="Filtrar por oportunidade" style="max-width:420px"><option value="">Todas as oportunidades</option></select><button class="btn btn-ghost btn-sm" id="copyIntCsv">Copiar lista (CSV)</button></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Pessoa</th><th>Contato</th><th>Oportunidade</th><th>Mensagem</th><th>Situação</th><th></th></tr></thead>
+            <tbody id="intBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="admin-panel" id="panel-cap">
+          <form class="card" id="formCap" novalidate style="margin-bottom:16px">
+            <h3 id="capFormTitle" style="margin-bottom:12px">Nova formação</h3>
+            <div class="form-grid">
+              <div class="full"><label class="lbl" for="k-titulo">Título <span class="req">*</span></label><input type="text" id="k-titulo"></div>
+              <div><label class="lbl" for="k-tipo">Tipo</label><select id="k-tipo"><option value="trilha">Trilha do voluntário</option><option value="especifica">Formação específica</option><option value="voluntalks">Voluntalks</option></select></div>
+              <div><label class="lbl" for="k-formato">Formato</label><select id="k-formato"><option>On-line ao vivo</option><option>Autoinstrucional (AVA)</option><option>Presencial</option><option>Híbrido</option></select></div>
+              <div><label class="lbl" for="k-ch">Carga horária</label><input type="number" id="k-ch" min="1" placeholder="4"></div>
+              <div><label class="lbl" for="k-vagas">Vagas</label><input type="number" id="k-vagas" min="1"></div>
+              <div><label class="lbl" for="k-dataiso">Data (para a agenda)</label><input type="date" id="k-dataiso"></div>
+              <div><label class="lbl" for="k-data">Data ou período, por extenso <span class="req">*</span></label><input type="text" id="k-data" placeholder="Ex.: Fluxo contínuo"></div>
+              <div class="full"><label class="lbl" for="k-link">Link de acesso (AVA, Meet, inscrição externa)</label><input type="url" id="k-link" placeholder="https://"></div>
+              <div class="full"><label class="lbl" for="k-desc">Descrição <span class="req">*</span></label><textarea id="k-desc"></textarea></div>
+            </div>
+            <div class="form-actions"><button type="submit" class="btn btn-primary" id="capSubmit">Publicar formação</button><button type="button" class="btn btn-ghost" id="capCancel" hidden>Cancelar edição</button></div>
+            <div id="capMsg" style="margin-top:10px"></div>
+          </form>
+          <div class="table-wrap" style="margin-bottom:16px"><table>
+            <thead><tr><th>Formação</th><th>Tipo</th><th>Data</th><th>CH</th><th>Inscritos</th><th>Situação</th><th></th></tr></thead>
+            <tbody id="capAdminBody"></tbody>
+          </table></div>
+          <h3 style="margin-bottom:10px">Inscrições</h3>
+          <div class="toolbar-actions"><select id="f-insc-cap" aria-label="Filtrar por formação" style="max-width:420px"><option value="">Todas as formações</option></select><button class="btn btn-ghost btn-sm" id="copyInscCsv">Copiar lista (CSV)</button></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Pessoa</th><th>Contato</th><th>Formação</th><th>Vínculo</th><th>Situação</th></tr></thead>
+            <tbody id="inscBody"></tbody>
+          </table></div>
+        </div>
+
+        <div class="admin-panel" id="panel-reu">
+          <div class="filters" id="reuFilters" role="group" aria-label="Filtrar reuniões"></div>
+          <div class="review-list" id="reuList"></div>
+        </div>
+
+        <div class="admin-panel" id="panel-rel">
+          <h3 style="margin-bottom:10px">Aguardando revisão</h3>
+          <div class="review-list" id="relPend"></div>
+          <h3 style="margin:24px 0 10px">Publicados</h3>
+          <div class="review-list" id="relPub"></div>
+        </div>
+
+        <div class="admin-panel" id="panel-ind">
+          <div class="filters" id="indFilters" role="group" aria-label="Filtrar indicações"></div>
+          <div class="review-list" id="indList"></div>
+        </div>
+
+        <div class="admin-panel" id="panel-num">
+          <div class="card" style="max-width:720px">
+            <h3>Números exibidos na página inicial</h3>
+            <p class="small muted" style="margin:6px 0 14px">Os dados pessoais do banco não ficam visíveis ao público. Para mostrar os totais na página inicial, a equipe publica um retrato dos números. Revise antes de publicar.</p>
+            <div class="form-grid">
+              <div><label class="lbl" for="n-vol">Voluntários no banco</label><input type="number" id="n-vol" min="0"></div>
+              <div><label class="lbl" for="n-horas">Horas certificadas</label><input type="number" id="n-horas" min="0"></div>
+              <div><label class="lbl" for="n-inst">Instituições na rede</label><input type="number" id="n-inst" min="0"></div>
+              <div><label class="lbl" for="n-acoes">Ações realizadas</label><input type="number" id="n-acoes" min="0"></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-ghost" id="numCalc" type="button">Preencher com os dados atuais</button><button class="btn btn-primary" id="numPub" type="button">Publicar números</button></div>
+            <div id="numMsg" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div><h4>Portal de Voluntariado UCSAL</h4><p>Coordenação de Ações Comunitárias e de Extensão (CAEX), Pró-Reitoria de Graduação, Extensão e Ação Comunitária da Universidade Católica do Salvador.</p><p style="margin-top:8px">Protótipo para validação institucional.</p></div>
+    <div><h4>Navegue</h4><ul><li><a href="#oportunidades">Oportunidades</a></li><li><a href="#formacao">Formação gratuita</a></li><li><a href="#monitoria">Monitoria</a></li><li><a href="#explorar">Explorar o mundo</a></li></ul></div>
+    <div><h4>Contato</h4><ul><li>extensao@ucsal.br</li><li>WhatsApp (71) 9959-0535</li></ul></div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ========== Conteúdo fixo ========== */
+const ODS = {1:['Erradicação da pobreza','#E5243B'],3:['Saúde e bem-estar','#4C9F38'],4:['Educação de qualidade','#C5192D'],9:['Inovação e infraestrutura','#FD6925'],10:['Redução das desigualdades','#DD1367'],11:['Cidades sustentáveis','#FD9D24'],13:['Ação climática','#3F7E44'],14:['Vida na água','#0A97D9'],15:['Vida terrestre','#56C02B'],16:['Paz e justiça','#00689D'],17:['Parcerias','#19486A']};
+const ICONS = {
+  evento:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h3"/></svg>',
+  social:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  saude:'<svg viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>',
+  educ:'<svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>',
+  liga:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 1.8 6 5.5"/></svg>',
+  pastoral:'<svg viewBox="0 0 24 24"><path d="M12 3v18M7 8h10"/></svg>',
+  digital:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+  ambiente:'<svg viewBox="0 0 24 24"><path d="M5 19c0-8 6-14 15-14-1 9-6 15-14 15"/><path d="M5 19l7-7"/></svg>'
+};
+const SEGMENTS = [
+  {id:'eventos',nome:'Eventos acadêmicos e institucionais',icon:'evento',cor:'#2B3A82',ods:[4,17],texto:'Monitoria e apoio à organização dos grandes encontros da universidade.',itens:['SEMOC: recepção, credenciamento e apoio às salas','Congressos, aulas inaugurais e colações','Feiras de profissões e visitas de escolas']},
+  {id:'social',nome:'Ações sociais e comunitárias',icon:'social',cor:'#C2410C',ods:[1,10],texto:'Presença da UCSAL nos territórios, em ações planejadas pelo CAEX.',itens:['Mutirões e ações em comunidades','UCSAL nas Paróquias','Campanhas de arrecadação de alimentos, roupas e livros']},
+  {id:'saude',nome:'Saúde e cuidado',icon:'saude',cor:'#B91C1C',ods:[3],texto:'Ações de prevenção, promoção da saúde e acolhimento.',itens:['Campanhas de doação de sangue','Feiras de saúde com as ligas da área','Apoio a ações de instituições parceiras']},
+  {id:'educacao',nome:'Educação e cidadania',icon:'educ',cor:'#047857',ods:[4,10],texto:'Conhecimento partilhado com escolas e comunidades.',itens:['Reforço escolar e preparação para o ENEM','Inclusão digital para pessoas idosas','Oficinas de Comunicação Não Violenta']},
+  {id:'ligas',nome:'Ligas e entidades estudantis',icon:'liga',cor:'#7C3AED',ods:[4,17],texto:'Ligas, atléticas e diretórios mobilizando seus membros para servir.',itens:['Ações de extensão das ligas acadêmicas','Campanhas solidárias das atléticas','Projetos dos DAs com a comunidade']},
+  {id:'pastoral',nome:'Pastoral e solidariedade',icon:'pastoral',cor:'#A16207',ods:[10,16],texto:'Serviço inspirado na identidade católica e comunitária da UCSAL.',itens:['Acolhida a migrantes com a Pastoral do Imigrante','Visitas e apoio a obras sociais','Ações em tempos litúrgicos e datas solidárias']},
+  {id:'digital',nome:'Voluntariado a distância',icon:'digital',cor:'#0369A1',ods:[9,17],texto:'Para quem quer contribuir de onde estiver, inclusive estudantes EAD.',itens:['Produção de conteúdo, design e vídeo para ONGs','Mentoria e tutoria on-line','Apoio em tecnologia e tradução']},
+  {id:'ambiente',nome:'Meio ambiente e sustentabilidade',icon:'ambiente',cor:'#15803D',ods:[13,14,15],texto:'Cuidado com a casa comum, em sintonia com a Laudato Si’.',itens:['Mutirões de limpeza de praias e parques','Educação ambiental em escolas','Coleta seletiva e campanhas de reciclagem']}
+];
+const SEG_BY_ID = Object.fromEntries(SEGMENTS.map(s=>[s.id,s]));
+const PARCEIROS = 'TETO, Associação Viva e Deixe Viver, Pastoral do Imigrante, NAMIR (UFBA), Arquidiocese de São Salvador da Bahia, Diocese de Camaçari, Prefeitura de Madre de Deus, Rádio Excelsior e Fundação Dom Avelar.';
+const COST = {gratis:['Gratuito','ok'],taxa:['Com taxa ou assinatura','warn'],varia:['Condições variam','info']};
+const EXTERNOS = [
+  {nome:'Bahia. Estado Voluntário',org:'Governo do Estado da Bahia (SAEB)',regiao:['bahia'],catolica:false,custo:'gratis',modelo:'Cadastro com dados e disponibilidade, escolha de eixos de atuação, candidatura a projetos e convites por e-mail conforme o perfil.',publico:'Qualquer cidadão; instituições públicas e privadas cadastram projetos.',contato:'estadovoluntario@saeb.ba.gov.br · (71) 3115-1756',link:'https://www.ba.gov.br/administracao/publicacao/8123/programa-bahia-estado-voluntario'},
+  {nome:'Voluntárias Sociais da Bahia (VSBA)',org:'Ligada ao Governo do Estado',regiao:['bahia'],catolica:false,custo:'varia',modelo:'Programas sociais estaduais, como o Mais Infância, de apoio a creches comunitárias, e o Mais Gestão Bahia, com a agricultura familiar.',publico:'Contato pelo site para saber como colaborar.',contato:'(71) 3329-5055',link:'https://www.vsba.ba.gov.br/'},
+  {nome:'Obras Sociais Irmã Dulce (OSID)',org:'Central de Voluntariado',regiao:['bahia'],catolica:true,custo:'gratis',modelo:'Voluntários chamados de Anjos de Irmã Dulce, Anjinhos, Anjos Geração e Amigas de Dulce atuam em diversas frentes da instituição.',publico:'Inscrição por formulário com motivação e atividades desejadas; segue a Lei nº 9.608/1998.',contato:'(71) 99168-1782 · voluntariado@irmadulce.org.br',link:'https://doe.irmadulce.org.br/doacoes/seja-um-voluntario',link2:'https://www.irmadulce.org.br/anjos-geracao',link2Txt:'Anjos Geração'},
+  {nome:'Worldpackers na Bahia',org:'Plataforma de intercâmbio',regiao:['bahia','mundo'],catolica:false,custo:'taxa',modelo:'Troca de habilidades por hospedagem em hostels, pousadas, ONGs e projetos sociais no estado.',publico:'Maiores de 18 anos com perfil preenchido.',contato:'',link:'https://www.worldpackers.com/pt-BR/search/south_america/brazil/state_bahia'},
+  {nome:'ACN Brasil',org:'Fundação Pontifícia Ajuda à Igreja que Sofre',regiao:['brasil'],catolica:true,custo:'gratis',modelo:'Apoio administrativo e relacionamento com benfeitores, presencial em São Paulo (mín. 4h semanais) ou on-line, por seis meses renováveis.',publico:'Presencial: maiores de 18 anos. On-line: sem pré-requisitos.',contato:'0800 77 099 27 · atendimento@acn.org.br',link:'https://www.acn.org.br/voluntariado/'},
+  {nome:'Comunidade Católica Shalom',org:'Programa de Voluntariado Shalom',regiao:['brasil','mundo'],catolica:true,custo:'taxa',modelo:'Expedições missionárias, voluntariado prolongado e voluntariado on-line, como no Espaço de Paz, na Ilha do Marajó (PA).',publico:'Maiores de 18 anos; algumas expedições priorizam profissionais de saúde.',contato:'',link:'https://comshalom.org/por-que-ser-um-voluntario-shalom/'},
+  {nome:'REIBA',org:'Rede de Educação Intercultural Bilíngue Amazônica (CEAMA)',regiao:['brasil','mundo'],catolica:true,custo:'varia',modelo:'Missão com povos originários da Amazônia, com formação prévia de cerca de cinco meses.',publico:'De 23 a 60 anos, leigos ou religiosos, abertos a outras culturas e à vida comunitária.',contato:'reiba.org',link:'https://www.vaticannews.va/pt/igreja/news/2025-02/reiba-voluntariado-como-fazer-parte.html'},
+  {nome:'Comunidade Missionária de Villaregia',org:'Voluntariado internacional',regiao:['mundo'],catolica:true,custo:'varia',modelo:'Experiências missionárias junto às comunidades em que a Villaregia atua.',publico:'Consulte requisitos, datas e formação no site oficial.',contato:'',link:'https://br.villaregia.org/o-que-posso-fazer/voluntariado-internacional/'},
+  {nome:'Voluntários da ONU (UNV)',org:'Nações Unidas',regiao:['mundo'],catolica:false,custo:'gratis',modelo:'Missões presenciais e remotas em agências da ONU em mais de 140 países.',publico:'Jovens de 18 a 29 anos ou profissionais com 25+ anos, com fluência em inglês, francês ou espanhol.',contato:'',link:'https://www.unv.org/',compare:'Inscrição gratuita. Missões presenciais oferecem ajuda de custo e passagens.'},
+  {nome:'Worldpackers',org:'Plataforma de intercâmbio',regiao:['mundo'],catolica:false,custo:'taxa',modelo:'Troca de habilidades por estadia em ONGs, hostels, ecovilas e projetos sociais em mais de 100 países.',publico:'Maiores de 18 anos com perfil preenchido e habilidades práticas.',contato:'',link:'https://www.worldpackers.com/pt-BR',compare:'Anuidade para aplicar em vagas ilimitadas. Inclui hospedagem e, às vezes, refeições.'},
+  {nome:'Workaway',org:'Plataforma de intercâmbio',regiao:['mundo'],catolica:false,custo:'taxa',modelo:'Intercâmbio cultural em fazendas, escolas, ONGs e famílias em mais de 170 países.',publico:'Viajantes maiores de 18 anos dispostos a colaborar algumas horas por dia.',contato:'',link:'https://www.workaway.info/pt',compare:'Assinatura anual para contato com anfitriões. Acomodação e alimentação em troca.'},
+  {nome:'Volunteer World',org:'Comparador de programas',regiao:['mundo'],catolica:false,custo:'taxa',modelo:'Mais de 2.000 programas verificados de conservação ambiental e impacto social.',publico:'Varia conforme o projeto; há opções para jovens, famílias e profissionais.',contato:'',link:'https://www.volunteerworld.com/pt',compare:'Projetos geralmente cobram taxa de participação para estrutura, suporte e acomodação.'},
+  {nome:'AIESEC Brasil',org:'Organização de jovens',regiao:['mundo'],catolica:false,custo:'taxa',modelo:'Intercâmbio de 6 a 8 semanas em ONGs e escolas, com foco nos ODS.',publico:'Jovens de 18 a 30 anos.',contato:'',link:'https://aiesec.org.br/',compare:'Taxa administrativa. Inclui suporte documental, acomodação e formação de liderança.'},
+  {nome:'Exchange do Bem',org:'Agência brasileira',regiao:['mundo'],catolica:false,custo:'taxa',modelo:'Conecta voluntários a projetos sociais e ambientais em 17 países.',publico:'A partir de 18 anos (menores acompanhados), sem limite máximo de idade.',contato:'',link:'',compare:'Pacotes pagos com suporte 24h, pré-inspeção dos projetos e auxílio com seguro.'}
+];
+const SELOS = [
+  {id:'semente',nome:'Semente',faixa:'Até 9 horas',min:0,max:9,cor:'#C9A227'},
+  {id:'broto',nome:'Broto',faixa:'De 10 a 39 horas',min:10,max:39,cor:'#4C9F38'},
+  {id:'arvore',nome:'Árvore',faixa:'De 40 a 99 horas',min:40,max:99,cor:'#047857'},
+  {id:'floresta',nome:'Floresta',faixa:'100 horas ou mais',min:100,max:1e9,cor:'#2B3A82'}
+];
+const VOL_STATUS = {novo:['Novo','info'],contatado:['Contatado','warn'],ativo:['Ativo','ok'],inativo:['Inativo','']};
+const IND_STATUS = {recebida:['Recebida','info'],analise:['Em análise','warn'],aprovada:['Aprovada','ok'],formalizada:['Parceria formalizada','gold'],recusada:['Não aprovada','bad']};
+const INT_STATUS = {novo:['Novo','info'],confirmado:['Confirmado','ok'],recusado:['Não confirmado','']};
+const INSC_STATUS = {inscrito:['Inscrito','info'],concluiu:['Concluiu','ok'],faltou:['Não concluiu','']};
+const REU_STATUS = {solicitada:['Solicitada','info'],confirmada:['Confirmada','ok'],realizada:['Realizada','gold'],cancelada:['Cancelada','']};
+const CAP_TIPO = {trilha:'Trilha do voluntário',especifica:'Formação específica',voluntalks:'Voluntalks'};
+
+/* ========== Utilidades ========== */
+const $ = s=>document.querySelector(s);
+const $$ = s=>Array.from(document.querySelectorAll(s));
+const esc = v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const arr = v=>Array.isArray(v)?v:[];
+const now = ()=>new Date().toISOString();
+const todayISO = ()=>{ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const fmtDate = iso=>{ try{ return iso?new Date(iso).toLocaleDateString('pt-BR'):''; }catch(e){ return ''; } };
+const fmtISO = iso=>{ if(!iso) return ''; const p=String(iso).split('-'); return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:iso; };
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const digits = s=>String(s||'').replace(/\D/g,'');
+const validEmail = s=>/^\S+@\S+\.\S+$/.test(s||'');
+const waLink = tel=>{ let d=digits(tel); if(!d) return ''; if(d.length<=11) d='55'+d; return 'https://wa.me/'+d; };
+const pill = (map,key)=>{ const m=map[key]||[key||'—','']; return '<span class="pill '+m[1]+'">'+esc(m[0])+'</span>'; };
+const odsBadges = list=>'<span class="ods-row">'+arr(list).filter(n=>ODS[n]).map(n=>'<span class="ods" title="ODS '+n+': '+esc(ODS[n][0])+'"><b style="background:'+ODS[n][1]+'">'+n+'</b>'+esc(ODS[n][0])+'</span>').join('')+'</span>';
+const seloFor = h=>SELOS.find(s=>h>=s.min&&h<=s.max)||SELOS[0];
+const seloSvg = (s,size)=>'<svg viewBox="0 0 48 48" width="'+(size||44)+'" height="'+(size||44)+'" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="'+s.cor+'"/><circle cx="24" cy="24" r="17" fill="none" stroke="#F0C462" stroke-width="2" stroke-dasharray="3 3"/>'+({semente:'<ellipse cx="24" cy="27" rx="6" ry="8" fill="#fff"/><path d="M24 19c0-4 3-6 6-6" stroke="#fff" stroke-width="2" fill="none"/>',broto:'<path d="M24 34V22" stroke="#fff" stroke-width="2.5"/><path d="M24 24c-6 0-9-4-9-8 5 0 9 3 9 8zM24 22c0-5 4-8 9-8 0 5-4 8-9 8z" fill="#fff"/>',arvore:'<path d="M24 36V26" stroke="#fff" stroke-width="3"/><circle cx="24" cy="20" r="9" fill="#fff"/>',floresta:'<path d="M16 34l6-14 6 14zM24 34l7-17 7 17z" fill="#fff"/><path d="M10 34l5-10 5 10z" fill="#fff" opacity=".8"/>'}[s.id])+'</svg>';
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2800); }
+function notice(el,type,msg){ el.innerHTML='<div class="notice '+type+'">'+esc(msg)+'</div>'; }
+async function copyText(txt,label){
+  try{ await navigator.clipboard.writeText(txt); toast(label+' copiado'); }
+  catch(e){ openModal('<div class="modal-head"><h3 id="modalTitle">Copie o conteúdo</h3><button class="btn btn-ghost btn-sm" data-close>Fechar</button></div><p class="small muted">Selecione o texto abaixo e copie manualmente.</p><textarea style="min-height:220px" readonly>'+esc(txt)+'</textarea>'); }
+}
+function csv(rows){ return rows.map(r=>r.map(c=>{ const s=String(c==null?'':c); return /[",;\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(';')).join('\n'); }
+function chipVals(group){ return $$('[data-group="'+group+'"] input:checked').map(i=>i.value); }
+function setChips(group,vals){ const set=new Set(arr(vals).map(String)); $$('[data-group="'+group+'"] input').forEach(i=>{ i.checked=set.has(i.value); }); }
+function writeError(e){
+  const code=e&&e.code;
+  if(code==='invalid_argument') return 'Seu acesso a este protótipo é somente de leitura, por isso o envio não foi gravado. Na versão de produção, qualquer pessoa poderá enviar.';
+  if(code==='quota_exceeded') return 'O banco de dados atingiu o limite de armazenamento. Avise a equipe do CAEX.';
+  return 'Não foi possível salvar agora. Verifique sua conexão e tente novamente.';
+}
+function localList(key){ try{ return JSON.parse(localStorage.getItem(key)||'[]'); }catch(e){ return []; } }
+function localPush(key,v){ try{ const l=localList(key); l.push(v); localStorage.setItem(key,JSON.stringify(l)); }catch(e){} }
+
+/* ========== Estado ========== */
+let db=null, user=null, uid=null, isAdmin=false;
+const S = {opps:[],relatos:[],caps:[],pub:null,vol:[],ints:[],relPend:[],inds:[],insc:[],reun:[],myCad:null};
+const F = {seg:'',mod:'',ods:'',cap:'',ext:'',ind:'',reu:''};
+let editingOpp=null, editingCap=null, openDetail=null;
+
+/* ========== Navegação ========== */
+const VIEWS=['inicio','oportunidades','formacao','monitoria','explorar','relatos','indicar','cadastro','equipe'];
+const ALIASES={iniciativas:'oportunidades',rede:'explorar','monitoria-reuniao':'monitoria'};
+function route(){
+  let h=(location.hash||'').replace('#',''); let v=ALIASES[h]||h;
+  if(!VIEWS.includes(v)) v='inicio';
+  $$('section.view').forEach(s=>s.classList.toggle('active', s.id==='view-'+v));
+  $$('#navTabs a').forEach(a=>{ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  if(v==='equipe'){ $('#adminLocked').hidden=isAdmin; $('#adminBody').hidden=!isAdmin; }
+  if(h==='monitoria-reuniao'){ const el=$('#monitoria-reuniao'); if(el) setTimeout(()=>el.scrollIntoView({block:'start'}),30); } else window.scrollTo(0,0);
+  if(v==='inicio') drawHero();
+}
+window.addEventListener('hashchange',route);
+
+/* ========== Render público ========== */
+function segCards(){ return SEGMENTS.map(s=>'<article class="seg" style="--seg-color:'+s.cor+'"><div class="seg-icon">'+ICONS[s.icon]+'</div><h3>'+esc(s.nome)+'</h3><p class="small">'+esc(s.texto)+'</p><ul>'+s.itens.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul><div style="margin-top:auto">'+odsBadges(s.ods)+'</div></article>').join(''); }
+function renderStatic(){
+  $('#segGrid').innerHTML=segCards(); $('#segGrid2').innerHTML=segCards();
+  $('#areasChips').innerHTML=SEGMENTS.map(s=>'<label class="chip-input"><input type="checkbox" value="'+s.id+'"><span>'+esc(s.nome)+'</span></label>').join('');
+  const opts=SEGMENTS.map(s=>'<option value="'+s.id+'">'+esc(s.nome)+'</option>').join('');
+  $('#f-area').insertAdjacentHTML('beforeend',opts);
+  $('#o-seg').innerHTML='<option value="">Selecione</option>'+opts;
+  $('#oOdsChips').innerHTML=Object.keys(ODS).map(n=>'<label class="chip-input"><input type="checkbox" value="'+n+'"><span>'+n+' · '+esc(ODS[n][0])+'</span></label>').join('');
+  $('#parceirosTxt').textContent=PARCEIROS;
+  $('#selos').innerHTML=SELOS.map(s=>'<div class="selo" data-selo="'+s.id+'">'+seloSvg(s)+'<div><b>'+esc(s.nome)+'</b><div class="small muted">'+esc(s.faixa)+'</div></div></div>').join('');
+  $('#compareBody').innerHTML=EXTERNOS.filter(e=>e.compare).map(e=>'<tr><td>'+(e.link?'<a href="'+esc(e.link)+'" target="_blank" rel="noopener">'+esc(e.nome)+'</a>':esc(e.nome))+'</td><td>'+esc(e.modelo)+'</td><td>'+esc(e.publico)+'</td><td>'+esc(e.compare)+'</td></tr>').join('');
+  renderExt();
+}
+function filterBtns(el,key,items,label){
+  el.innerHTML=(label?'<span class="flabel">'+esc(label)+'</span>':'')+items.map(([id,txt])=>'<button type="button" data-k="'+key+'" data-v="'+esc(id)+'" aria-pressed="'+(F[key]===id)+'">'+esc(txt)+'</button>').join('');
+}
+function renderExt(){
+  filterBtns($('#extFilter'),'ext',[['','Todos'],['bahia','Na Bahia'],['brasil','No Brasil'],['mundo','Pelo mundo'],['catolica','Inspiração católica'],['gratis','Gratuitos']]);
+  const list=EXTERNOS.filter(e=>{ const f=F.ext; if(!f) return true; if(f==='catolica') return e.catolica; if(f==='gratis') return e.custo==='gratis'; return e.regiao.includes(f); });
+  $('#extList').innerHTML=list.map(e=>{ const c=COST[e.custo]; const reg=e.regiao.map(r=>({bahia:'Bahia',brasil:'Brasil',mundo:'Mundo'}[r])).join(' · ');
+    return '<article class="ext"><div class="opp-tags"><span class="pill">'+esc(reg)+'</span><span class="pill '+c[1]+'">'+esc(c[0])+'</span>'+(e.catolica?'<span class="pill gold">Inspiração católica</span>':'')+'</div><h3>'+esc(e.nome)+'</h3><span class="small muted">'+esc(e.org)+'</span><dl><dt>Como funciona</dt><dd>'+esc(e.modelo)+'</dd><dt>Para quem</dt><dd>'+esc(e.publico)+'</dd>'+(e.contato?'<dt>Contato</dt><dd>'+esc(e.contato)+'</dd>':'')+'</dl><div class="ext-foot">'+(e.link?'<a class="btn btn-ghost btn-sm" href="'+esc(e.link)+'" target="_blank" rel="noopener">Site oficial ↗</a>':'<span class="small muted">Busque pelo nome oficial</span>')+(e.link2?'<a class="small" href="'+esc(e.link2)+'" target="_blank" rel="noopener">'+esc(e.link2Txt)+' ↗</a>':'')+'</div></article>'; }).join('');
+}
+function openOpps(){ return S.opps.filter(o=>o.status!=='encerrada'); }
+function renderOpps(){
+  const open=openOpps();
+  $('#stOpp').textContent=open.length;
+  const segs=[...new Set(open.map(o=>o.segmento))].filter(Boolean);
+  filterBtns($('#oppFilterSeg'),'seg',[['','Todas as frentes']].concat(segs.map(id=>[id,(SEG_BY_ID[id]||{}).nome||id])),'Frente');
+  const mods=[...new Set(open.map(o=>o.modalidade).filter(Boolean))];
+  filterBtns($('#oppFilterMod'),'mod',[['','Todas']].concat(mods.map(m=>[m,m])),'Modalidade');
+  const odsUsed=[...new Set(open.flatMap(o=>arr(o.ods).map(String)))].sort((a,b)=>a-b);
+  filterBtns($('#oppFilterOds'),'ods',[['','Todos']].concat(odsUsed.filter(n=>ODS[n]).map(n=>[n,'ODS '+n])),'ODS');
+  const list=open.filter(o=>(!F.seg||o.segmento===F.seg)&&(!F.mod||o.modalidade===F.mod)&&(!F.ods||arr(o.ods).map(String).includes(F.ods)));
+  const mine=new Set(localList('vol_interesses'));
+  if(!list.length){ $('#oppList').innerHTML='<div class="empty">Nenhuma chamada aberta com esses filtros. Faça seu cadastro para ser avisado quando surgir a próxima.</div>'; return; }
+  $('#oppList').innerHTML=list.map(o=>{ const seg=SEG_BY_ID[o.segmento]||{nome:o.segmento,cor:'#2B3A82'}; const done=mine.has(o._id);
+    return '<article class="opp" style="border-top:4px solid '+seg.cor+'"><div class="opp-tags"><span class="pill">'+esc(seg.nome)+'</span>'+(o.modalidade?'<span class="pill info">'+esc(o.modalidade)+'</span>':'')+(o.exemplo?'<span class="pill warn">Exemplo</span>':'')+'</div><h3>'+esc(o.titulo)+'</h3><div class="opp-meta"><span>📅 '+esc(o.data)+'</span>'+(o.local?'<span>📍 '+esc(o.local)+'</span>':'')+(o.turno?'<span>🕒 '+esc(o.turno)+'</span>':'')+(o.vagas?'<span>👥 '+esc(o.vagas)+' vagas</span>':'')+(o.horas?'<span>🎓 '+esc(o.horas)+'h certificadas</span>':'')+'</div><p class="small">'+esc(o.descricao)+'</p>'+(arr(o.ods).length?odsBadges(o.ods):'')+'<div style="margin-top:auto"><button class="btn '+(done?'btn-ghost':'btn-primary')+' btn-sm" data-interest="'+esc(o._id)+'">'+(done?'Interesse enviado ✓':'Tenho interesse')+'</button></div></article>'; }).join('');
+}
+function openCaps(){ return S.caps.filter(c=>c.status!=='encerrada'); }
+function renderCaps(){
+  filterBtns($('#capFilter'),'cap',[['','Todas'],['trilha','Trilha do voluntário'],['especifica','Formações específicas'],['voluntalks','Voluntalks']]);
+  const list=openCaps().filter(c=>!F.cap||c.tipo===F.cap);
+  const mine=new Set(localList('vol_inscricoes'));
+  if(!list.length){ $('#capList').innerHTML='<div class="empty">Nenhuma formação com inscrições abertas nesta categoria.</div>'; return; }
+  $('#capList').innerHTML=list.map(c=>{ const done=mine.has(c._id);
+    return '<article class="cap'+(c.tipo==='voluntalks'?' talk':'')+'"><div class="opp-tags"><span class="pill '+(c.tipo==='voluntalks'?'info':'gold')+'">'+esc(CAP_TIPO[c.tipo]||'Formação')+'</span><span class="pill ok">Gratuita</span>'+(c.exemplo?'<span class="pill warn">Proposta</span>':'')+'</div><h3>'+esc(c.titulo)+'</h3><div class="opp-meta"><span>📅 '+esc(c.data)+'</span>'+(c.formato?'<span>💻 '+esc(c.formato)+'</span>':'')+(c.ch?'<span>⏱ '+esc(c.ch)+'h</span>':'')+(c.vagas?'<span>👥 '+esc(c.vagas)+' vagas</span>':'')+'<span>📜 Certificado</span></div><p class="small">'+esc(c.descricao)+'</p><div style="margin-top:auto" class="row-actions"><button class="btn '+(done?'btn-ghost':'btn-primary')+' btn-sm" data-insc="'+esc(c._id)+'">'+(done?'Inscrição enviada ✓':'Quero me inscrever')+'</button>'+(c.link?'<a class="btn btn-ghost btn-sm" href="'+esc(c.link)+'" target="_blank" rel="noopener">Acessar ↗</a>':'')+'</div></article>'; }).join('');
+}
+function storyCard(r){ return '<article class="story">'+(r.exemplo?'<span class="pill warn" style="align-self:flex-start">Relato ilustrativo</span>':'')+'<h3>'+esc(r.titulo)+'</h3><blockquote>'+esc(r.texto)+'</blockquote><footer><b>'+esc(r.nome)+'</b>'+(r.curso?' · '+esc(r.curso):'')+'<br>'+esc(r.iniciativa)+(r.periodo?' · '+esc(r.periodo):'')+'</footer></article>'; }
+function renderStories(){
+  const empty='<div class="empty">Ainda não há relatos publicados. Seja a primeira pessoa a partilhar sua experiência.</div>';
+  $('#storyGrid').innerHTML=S.relatos.length?S.relatos.map(storyCard).join(''):empty;
+  $('#storyHome').innerHTML=S.relatos.length?S.relatos.slice(0,3).map(storyCard).join(''):empty;
+}
+function renderAgenda(){
+  const t=todayISO();
+  const items=openOpps().filter(o=>o.dataISO&&o.dataISO>=t).map(o=>({iso:o.dataISO,tipo:'Ação',titulo:o.titulo,sub:o.data+(o.local?' · '+o.local:''),href:'#oportunidades',ex:o.exemplo}))
+    .concat(openCaps().filter(c=>c.dataISO&&c.dataISO>=t).map(c=>({iso:c.dataISO,tipo:CAP_TIPO[c.tipo]||'Formação',titulo:c.titulo,sub:c.data+(c.formato?' · '+c.formato:''),href:'#formacao',ex:c.exemplo})))
+    .sort((a,b)=>a.iso.localeCompare(b.iso)).slice(0,6);
+  if(!items.length){ $('#agendaHome').innerHTML='<div class="empty">Nenhuma data marcada no momento. Acompanhe as oportunidades e formações em fluxo contínuo.</div>'; return; }
+  $('#agendaHome').innerHTML=items.map(i=>{ const p=i.iso.split('-'); return '<div class="ag-item"><div class="ag-date"><b>'+esc(p[2])+'</b><span>'+esc(MESES[Number(p[1])-1]||'')+'</span></div><div><div class="opp-tags"><span class="pill">'+esc(i.tipo)+'</span>'+(i.ex?'<span class="pill warn">Exemplo</span>':'')+'</div><b>'+esc(i.titulo)+'</b><div class="small muted">'+esc(i.sub)+'</div></div><a class="btn btn-ghost btn-sm" href="'+i.href+'">Ver detalhes</a></div>'; }).join('');
+}
+function renderPub(){
+  const p=S.pub; const fmt=n=>(n==null||n==='')?'—':Number(n).toLocaleString('pt-BR');
+  $('#stVol').textContent=p?fmt(p.voluntarios):'—'; $('#stHoras').textContent=p?fmt(p.horas):'—'; $('#stInst').textContent=p?fmt(p.instituicoes):'—';
+  $('#statUpdated').textContent=p&&p.atualizadoEm?'Números consolidados pelo CAEX em '+fmtDate(p.atualizadoEm)+'.':'Números consolidados pela equipe do CAEX.';
+}
+function renderMySelo(){
+  $$('.selo').forEach(el=>el.classList.remove('me'));
+  if(!S.myCad){ $('#meuSelo').innerHTML='<p class="small muted">Faça seu cadastro para acompanhar seu selo aqui.</p>'; return; }
+  const h=Number(S.myCad.horasCert)||0, s=seloFor(h); const el=$('.selo[data-selo="'+s.id+'"]'); if(el) el.classList.add('me');
+  const next=SELOS[SELOS.indexOf(s)+1];
+  $('#meuSelo').innerHTML='<div class="notice ok">Você tem <b>'+h+' horas</b> certificadas e está no selo <b>'+esc(s.nome)+'</b>.'+(next?' Faltam '+(next.min-h)+' horas para o selo '+esc(next.nome)+'.':'')+'</div>';
+}
+function renderPublic(){ renderOpps(); renderCaps(); renderStories(); renderAgenda(); renderPub(); renderMySelo(); }
+
+/* ========== Render painel ========== */
+function volFiltered(){
+  const q=$('#f-busca').value.trim().toLowerCase(), dia=$('#f-dia').value, turno=$('#f-turno').value, area=$('#f-area').value, liga=$('#f-liga').value, st=$('#f-status').value;
+  return S.vol.filter(v=>{
+    if(dia&&!arr(v.dias).includes(dia)) return false; if(turno&&!arr(v.turnos).includes(turno)) return false;
+    if(area&&!arr(v.areas).includes(area)) return false; if(liga&&v.liga!==liga) return false; if(st&&(v.status||'novo')!==st) return false;
+    if(q){ const hay=[v.nome,v.curso,v.email,v.ligaNome,v.contribuicao,arr(v.habilidades).join(' '),arr(v.interesses).join(' '),v.vinculo].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+}
+function calcNums(){
+  const horas=S.vol.reduce((a,v)=>a+(Number(v.horasCert)||0),0);
+  const inst=9+S.inds.filter(i=>i.status==='aprovada'||i.status==='formalizada').length;
+  const acoes=S.opps.filter(o=>o.status==='encerrada'&&!o.exemplo).length;
+  return {voluntarios:S.vol.length,horas,instituicoes:inst,acoes};
+}
+function renderKpis(){
+  const n=calcNums();
+  const reuP=S.reun.filter(r=>(r.status||'solicitada')==='solicitada').length;
+  const relP=S.relPend.filter(r=>(r.status||'pendente')==='pendente').length;
+  const indP=S.inds.filter(i=>['recebida','analise'].includes(i.status||'recebida')).length;
+  const k=(v,l,attn)=>'<div class="kpi'+(attn&&v?' attn':'')+'"><b>'+v+'</b><span>'+l+'</span></div>';
+  $('#kpis').innerHTML=k(n.voluntarios,'voluntários cadastrados')+k(S.vol.filter(v=>v.liga==='sim').length,'integrantes de ligas')+k(n.horas,'horas certificadas')+k(S.insc.length,'inscrições em formações')+k(openOpps().length,'oportunidades abertas')+k(reuP,'reuniões a confirmar',true)+k(relP,'relatos para revisar',true)+k(indP,'indicações em aberto',true);
+  $('#cnt-vol').textContent=S.vol.length; $('#cnt-opp').textContent=S.opps.length; $('#cnt-int').textContent=S.ints.length; $('#cnt-cap').textContent=S.caps.length; $('#cnt-reu').textContent=reuP; $('#cnt-rel').textContent=relP; $('#cnt-ind').textContent=indP;
+}
+function renderVol(){
+  const list=volFiltered();
+  $('#volCount').textContent=list.length+' de '+S.vol.length+' voluntários';
+  if(!list.length){ $('#volBody').innerHTML='<tr><td colspan="8"><div class="empty">Nenhum voluntário com esses filtros.</div></td></tr>'; return; }
+  $('#volBody').innerHTML=list.map(v=>{
+    const st=v.status||'novo', h=Number(v.horasCert)||0, s=seloFor(h), wa=waLink(v.telefone);
+    const areas=arr(v.areas).map(a=>'<span class="pill">'+esc((SEG_BY_ID[a]||{nome:a}).nome.split(' ')[0])+'</span>').join('');
+    let row='<tr><td><b>'+esc(v.nome)+'</b>'+(v.exemplo?' <span class="pill warn">Exemplo</span>':'')+'<div class="small muted">'+esc(v.vinculo||'')+(v.curso?' · '+esc(v.curso):'')+'</div></td>'+
+      '<td class="small">'+esc(v.telefone)+'<br>'+esc(v.email)+'</td>'+
+      '<td class="small">'+esc(arr(v.dias).join(', '))+'<br><span class="muted">'+esc(arr(v.turnos).join(', '))+'</span></td>'+
+      '<td><div class="tags">'+areas+'</div></td>'+
+      '<td class="small">'+(v.liga==='sim'?'<span class="pill ok">Sim</span><div>'+esc(v.ligaNome||'')+'</div>':'<span class="muted">Não</span>')+'</td>'+
+      '<td><select data-vst="'+esc(v._id)+'" aria-label="Situação">'+Object.keys(VOL_STATUS).map(k=>'<option value="'+k+'"'+(k===st?' selected':'')+'>'+VOL_STATUS[k][0]+'</option>').join('')+'</select></td>'+
+      '<td><input type="number" min="0" style="width:76px;min-width:0" data-vh="'+esc(v._id)+'" value="'+h+'" aria-label="Horas certificadas"><div class="small muted" style="margin-top:4px">'+esc(s.nome)+'</div></td>'+
+      '<td><div class="row-actions">'+(wa?'<a class="btn btn-ghost btn-sm" href="'+wa+'" target="_blank" rel="noopener">WhatsApp</a>':'')+'<button class="btn btn-ghost btn-sm" data-vdet="'+esc(v._id)+'">'+(openDetail===v._id?'Fechar':'Detalhes')+'</button></div></td></tr>';
+    if(openDetail===v._id){
+      row+='<tr class="detail-row"><td colspan="8"><dl class="detail">'+
+        '<div><dt>Como quer contribuir</dt><dd>'+esc(v.contribuicao)+'</dd></div>'+
+        '<div><dt>Habilidades</dt><dd>'+esc(arr(v.habilidades).join(', ')||'—')+'</dd></div>'+
+        '<div><dt>Interesses</dt><dd>'+esc(arr(v.interesses).join(', ')||'—')+'</dd></div>'+
+        '<div><dt>Outras entidades</dt><dd>'+esc(arr(v.entidades).join(', ')||'—')+'</dd></div>'+
+        '<div><dt>Experiência anterior</dt><dd>'+esc(v.experiencia||'—')+'</dd></div>'+
+        '<div><dt>Horas por mês · modalidade</dt><dd>'+esc(v.horasMes||'—')+' · '+esc(v.modalidade||'—')+'</dd></div>'+
+        '<div><dt>Bahia. Estado Voluntário · avisos</dt><dd>'+(v.bahiaVoluntario==='sim'?'Cadastrado':'Não cadastrado')+' · '+(v.whatsappOk?'aceita':'não aceita')+'</dd></div>'+
+        '<div><dt>Cadastro</dt><dd>'+fmtDate(v.criadoEm)+' · '+(v.origem==='equipe'?'pela equipe':'pelo portal')+'</dd></div>'+
+        '<div><dt>Selo</dt><dd>'+esc(s.nome)+' ('+h+'h)</dd></div>'+
+        '<div style="grid-column:1/-1"><dt><label for="vn-'+esc(v._id)+'">Anotações da equipe</label></dt><dd><textarea id="vn-'+esc(v._id)+'" style="min-height:60px">'+esc(v.notas||'')+'</textarea><div class="row-actions" style="margin-top:6px"><button class="btn btn-primary btn-sm" data-vnote="'+esc(v._id)+'">Salvar anotação</button><button class="btn btn-gold btn-sm" data-vdecl="'+esc(v._id)+'">Gerar declaração de horas</button><button class="btn btn-danger btn-sm" data-vdel="'+esc(v._id)+'">Excluir cadastro</button></div></dd></div>'+
+        '</dl></td></tr>';
+    }
+    return row;
+  }).join('');
+}
+function renderOppAdmin(){
+  const counts={}; S.ints.forEach(i=>{ counts[i.oportunidadeId]=(counts[i.oportunidadeId]||0)+1; });
+  const cur=$('#f-int-opp').value;
+  $('#f-int-opp').innerHTML='<option value="">Todas as oportunidades</option>'+S.opps.map(o=>'<option value="'+esc(o._id)+'"'+(o._id===cur?' selected':'')+'>'+esc(o.titulo)+'</option>').join('');
+  $('#oppAdminBody').innerHTML=S.opps.length?S.opps.map(o=>'<tr><td><b>'+esc(o.titulo)+'</b>'+(o.exemplo?' <span class="pill warn">Exemplo</span>':'')+'</td><td class="small">'+esc((SEG_BY_ID[o.segmento]||{nome:o.segmento}).nome)+'</td><td class="small">'+esc(o.data)+'</td><td>'+esc(o.vagas||'—')+'</td><td>'+(counts[o._id]||0)+'</td><td>'+(o.status==='encerrada'?'<span class="pill">Encerrada</span>':'<span class="pill ok">Aberta</span>')+'</td><td><div class="row-actions"><button class="btn btn-ghost btn-sm" data-oedit="'+esc(o._id)+'">Editar</button><button class="btn btn-ghost btn-sm" data-otoggle="'+esc(o._id)+'">'+(o.status==='encerrada'?'Reabrir':'Encerrar')+'</button><button class="btn btn-danger btn-sm" data-odel="'+esc(o._id)+'">Excluir</button></div></td></tr>').join(''):'<tr><td colspan="7"><div class="empty">Nenhuma oportunidade publicada.</div></td></tr>';
+}
+function intFiltered(){ const f=$('#f-int-opp').value; return S.ints.filter(i=>!f||i.oportunidadeId===f); }
+function renderInts(){
+  const list=intFiltered();
+  $('#intBody').innerHTML=list.length?list.map(i=>{ const wa=waLink(i.telefone); return '<tr><td><b>'+esc(i.nome)+'</b><div class="small muted">'+fmtDate(i.criadoEm)+'</div></td><td class="small">'+esc(i.telefone)+'<br>'+esc(i.email)+'</td><td class="small">'+esc(i.oportunidadeTitulo)+'</td><td class="small">'+esc(i.mensagem||'—')+'</td><td><select data-ist="'+esc(i._id)+'" aria-label="Situação">'+Object.keys(INT_STATUS).map(k=>'<option value="'+k+'"'+(k===(i.status||'novo')?' selected':'')+'>'+INT_STATUS[k][0]+'</option>').join('')+'</select></td><td>'+(wa?'<a class="btn btn-ghost btn-sm" href="'+wa+'" target="_blank" rel="noopener">WhatsApp</a>':'')+'</td></tr>'; }).join(''):'<tr><td colspan="6"><div class="empty">Ninguém manifestou interesse ainda.</div></td></tr>';
+}
+function inscFiltered(){ const f=$('#f-insc-cap').value; return S.insc.filter(i=>!f||i.capId===f); }
+function renderCapAdmin(){
+  const counts={}; S.insc.forEach(i=>{ counts[i.capId]=(counts[i.capId]||0)+1; });
+  $('#capAdminBody').innerHTML=S.caps.length?S.caps.map(c=>'<tr><td><b>'+esc(c.titulo)+'</b>'+(c.exemplo?' <span class="pill warn">Proposta</span>':'')+'</td><td class="small">'+esc(CAP_TIPO[c.tipo]||'')+'</td><td class="small">'+esc(c.data)+'</td><td>'+esc(c.ch||'—')+'</td><td>'+(counts[c._id]||0)+'</td><td>'+(c.status==='encerrada'?'<span class="pill">Encerrada</span>':'<span class="pill ok">Aberta</span>')+'</td><td><div class="row-actions"><button class="btn btn-ghost btn-sm" data-kedit="'+esc(c._id)+'">Editar</button><button class="btn btn-ghost btn-sm" data-ktoggle="'+esc(c._id)+'">'+(c.status==='encerrada'?'Reabrir':'Encerrar')+'</button><button class="btn btn-danger btn-sm" data-kdel="'+esc(c._id)+'">Excluir</button></div></td></tr>').join(''):'<tr><td colspan="7"><div class="empty">Nenhuma formação publicada.</div></td></tr>';
+  const cur=$('#f-insc-cap').value;
+  $('#f-insc-cap').innerHTML='<option value="">Todas as formações</option>'+S.caps.map(c=>'<option value="'+esc(c._id)+'"'+(c._id===cur?' selected':'')+'>'+esc(c.titulo)+'</option>').join('');
+  const list=inscFiltered();
+  $('#inscBody').innerHTML=list.length?list.map(i=>'<tr><td><b>'+esc(i.nome)+'</b><div class="small muted">'+fmtDate(i.criadoEm)+'</div></td><td class="small">'+esc(i.telefone)+'<br>'+esc(i.email)+'</td><td class="small">'+esc(i.capTitulo)+'</td><td class="small">'+esc(i.vinculo||'—')+'</td><td><select data-inst="'+esc(i._id)+'" aria-label="Situação">'+Object.keys(INSC_STATUS).map(k=>'<option value="'+k+'"'+(k===(i.status||'inscrito')?' selected':'')+'>'+INSC_STATUS[k][0]+'</option>').join('')+'</select></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">Nenhuma inscrição ainda.</div></td></tr>';
+}
+function renderReu(){
+  filterBtns($('#reuFilters'),'reu',[['','Todas ('+S.reun.length+')']].concat(Object.keys(REU_STATUS).map(k=>[k,REU_STATUS[k][0]+' ('+S.reun.filter(r=>(r.status||'solicitada')===k).length+')'])));
+  const list=S.reun.filter(r=>!F.reu||(r.status||'solicitada')===F.reu);
+  $('#reuList').innerHTML=list.length?list.map(r=>{ const id=esc(r._id), wa=waLink(r.telefone);
+    return '<article class="review"><div class="review-head"><div><h3>'+esc(r.nome)+'</h3><span class="small muted">'+esc(r.perfil)+' · '+esc(r.assunto)+'</span></div>'+pill(REU_STATUS,r.status||'solicitada')+'</div>'+
+    '<dl><div><dt>Preferências</dt><dd>'+esc(fmtISO(r.data1))+' ('+esc(r.turno1)+')'+(r.data2?'<br>'+esc(fmtISO(r.data2))+' ('+esc(r.turno2)+')':'')+'</dd></div><div><dt>Formato</dt><dd>'+esc(r.formato)+'</dd></div><div><dt>Contato</dt><dd>'+esc(r.telefone)+'<br>'+esc(r.email)+'</dd></div>'+(r.evento?'<div><dt>Evento</dt><dd>'+esc(r.evento)+'</dd></div>':'')+'<div style="grid-column:span 2"><dt>Mensagem</dt><dd>'+esc(r.mensagem||'—')+'</dd></div></dl>'+
+    '<div class="form-grid"><div><label class="lbl" for="rs-'+id+'">Situação</label><select id="rs-'+id+'">'+Object.keys(REU_STATUS).map(k=>'<option value="'+k+'"'+(k===(r.status||'solicitada')?' selected':'')+'>'+REU_STATUS[k][0]+'</option>').join('')+'</select></div><div><label class="lbl" for="rd-'+id+'">Data e horário confirmados</label><input type="text" id="rd-'+id+'" value="'+esc(r.confirmadoPara||'')+'" placeholder="Ex.: 18/11, 15h"></div><div class="full"><label class="lbl" for="rl-'+id+'">Link do Meet ou local</label><input type="text" id="rl-'+id+'" value="'+esc(r.linkLocal||'')+'"></div><div class="full"><label class="lbl" for="rn-'+id+'">Encaminhamentos</label><textarea id="rn-'+id+'" style="min-height:60px">'+esc(r.notas||'')+'</textarea></div></div>'+
+    '<div class="row-actions"><button class="btn btn-primary btn-sm" data-rsave="'+id+'">Salvar</button><button class="btn btn-gold btn-sm" data-rmsg="'+id+'">Copiar mensagem de confirmação</button>'+(wa?'<a class="btn btn-ghost btn-sm" href="'+wa+'" target="_blank" rel="noopener">WhatsApp</a>':'')+'<button class="btn btn-danger btn-sm" data-rdel="'+id+'">Excluir</button></div></article>'; }).join(''):'<div class="empty">Nenhuma solicitação nesta situação.</div>';
+}
+function renderRelAdmin(){
+  const pend=S.relPend.filter(r=>(r.status||'pendente')==='pendente');
+  $('#relPend').innerHTML=pend.length?pend.map(r=>'<article class="review"><div class="review-head"><h3>'+esc(r.titulo)+'</h3><span class="small muted">enviado em '+fmtDate(r.criadoEm)+'</span></div><dl><div><dt>Autor</dt><dd>'+esc(r.nome)+(r.curso?' · '+esc(r.curso):'')+'</dd></div><div><dt>Iniciativa</dt><dd>'+esc(r.iniciativa)+(r.periodo?' · '+esc(r.periodo):'')+'</dd></div><div><dt>Publicação com nome</dt><dd>'+(r.autorizaNome?'Autorizada':'Publicar sem nome')+'</dd></div></dl><p class="small">'+esc(r.texto)+'</p><div class="row-actions"><button class="btn btn-primary btn-sm" data-rpub="'+esc(r._id)+'">Publicar</button><button class="btn btn-ghost btn-sm" data-rrec="'+esc(r._id)+'">Não publicar</button></div></article>').join(''):'<div class="empty">Nenhum relato aguardando revisão.</div>';
+  $('#relPub').innerHTML=S.relatos.length?S.relatos.map(r=>'<article class="review"><div class="review-head"><h3>'+esc(r.titulo)+'</h3><button class="btn btn-ghost btn-sm" data-runpub="'+esc(r._id)+'">Retirar do portal</button></div><p class="small muted">'+esc(r.nome)+' · '+esc(r.iniciativa)+'</p></article>').join(''):'<div class="empty">Nenhum relato publicado.</div>';
+}
+function renderInds(){
+  filterBtns($('#indFilters'),'ind',[['','Todas ('+S.inds.length+')']].concat(Object.keys(IND_STATUS).map(k=>[k,IND_STATUS[k][0]+' ('+S.inds.filter(i=>(i.status||'recebida')===k).length+')'])));
+  const list=S.inds.filter(i=>!F.ind||(i.status||'recebida')===F.ind);
+  $('#indList').innerHTML=list.length?list.map(i=>'<article class="review"><div class="review-head"><div><h3>'+esc(i.instituicao)+'</h3><span class="small muted">'+esc(i.tipo)+(i.causa?' · '+esc(i.causa):'')+' · '+esc(i.local)+'</span></div>'+pill(IND_STATUS,i.status||'recebida')+'</div><dl><div><dt>Necessidade</dt><dd>'+esc(i.necessidade)+'</dd></div><div><dt>Motivo da indicação</dt><dd>'+esc(i.motivo||'—')+'</dd></div><div><dt>Contato do local</dt><dd>'+esc(i.responsavel||'—')+(i.contatoLocal?' · '+esc(i.contatoLocal):'')+(i.endereco?'<br>'+esc(i.endereco):'')+'</dd></div><div><dt>Indicado por</dt><dd>'+esc(i.indicanteNome)+' · '+esc(i.indicanteContato)+'<br><span class="muted">'+esc(i.relacao||'')+'</span></dd></div><div><dt>Recebida em</dt><dd>'+fmtDate(i.criadoEm)+'</dd></div><div><dt><label for="is-'+esc(i._id)+'">Situação</label></dt><dd><select id="is-'+esc(i._id)+'">'+Object.keys(IND_STATUS).map(k=>'<option value="'+k+'"'+(k===(i.status||'recebida')?' selected':'')+'>'+IND_STATUS[k][0]+'</option>').join('')+'</select></dd></div></dl><div><label class="lbl" for="ip-'+esc(i._id)+'">Parecer da equipe</label><textarea id="ip-'+esc(i._id)+'" style="min-height:70px">'+esc(i.parecer||'')+'</textarea></div><div class="row-actions"><button class="btn btn-primary btn-sm" data-isave="'+esc(i._id)+'">Salvar análise</button><button class="btn btn-danger btn-sm" data-idel="'+esc(i._id)+'">Excluir</button></div></article>').join(''):'<div class="empty">Nenhuma indicação nesta situação.</div>';
+}
+function renderAdmin(){ if(!isAdmin) return; renderKpis(); renderVol(); renderOppAdmin(); renderInts(); renderCapAdmin(); renderReu(); renderRelAdmin(); renderInds(); }
+
+/* ========== Banco de dados ========== */
+function showBanner(type,msg){ const b=$('#statusBanner'); b.hidden=false; b.dataset.type=type; b.innerHTML='<div class="notice '+type+'">'+esc(msg)+'</div>'; }
+function hideBanner(type){ const b=$('#statusBanner'); if(b.dataset.type===type){ b.hidden=true; b.innerHTML=''; } }
+function subscribe(path,key,sortField,after,asc){
+  let done=false;
+  const timer=setTimeout(()=>{ if(!done) showBanner('warn','Os dados ainda não carregaram. Verifique sua conexão; a página atualiza sozinha quando o servidor responder.'); },10000);
+  db.collection(path).onSnapshot(snap=>{
+    if(!snap.metadata.fromCache){ done=true; clearTimeout(timer); hideBanner('warn'); }
+    S[key]=snap.docs.map(d=>Object.assign({_id:d.id},d.data())).sort((a,b)=>{ const x=a[sortField], y=b[sortField]; const r=(typeof x==='number'&&typeof y==='number')?(y-x):String(y||'').localeCompare(String(x||'')); return asc?-r:r; });
+    after();
+  }, err=>{ done=true; clearTimeout(timer); if(err&&err.code!=='revoked') showBanner('bad','Não foi possível carregar parte dos dados.'); after(); });
+}
+async function init(){
+  renderStatic(); route(); bindPublic(); bindAdmin(); renderPublic();
+  try{ db=await claude.use('db'); }catch(e){ db=null; }
+  try{ user=await claude.use('user'); }catch(e){ user=null; }
+  if(user){ try{ isAdmin=!!(await user.canEdit()); }catch(e){} try{ uid=await user.id(); }catch(e){} }
+  $('#adminTab').hidden=!isAdmin; route();
+  if(!db){ showBanner('info','Você está vendo o portal em modo de apresentação: os envios ficam disponíveis ao abrir o portal com uma conta autorizada.'); return; }
+  subscribe('oportunidades','opps','criadoEm',()=>{ renderPublic(); renderAdmin(); });
+  subscribe('capacitacoes','caps','ordem',()=>{ renderPublic(); renderAdmin(); },true);
+  subscribe('relatos','relatos','publicadoEm',()=>{ renderStories(); renderAdmin(); });
+  try{ db.doc('publico/indicadores').onSnapshot(d=>{ S.pub=d.exists?d.data():null; renderPub(); },()=>{}); }catch(e){}
+  if(isAdmin){
+    $('#cadModeNote').innerHTML='<div class="notice info" style="margin-bottom:16px">Modo equipe: cada envio cria um novo voluntário no banco. Use para registrar inscrições feitas presencialmente ou por telefone.</div>';
+    subscribe('cadastros','vol','criadoEm',renderAdmin);
+    subscribe('interesses','ints','criadoEm',renderAdmin);
+    subscribe('inscricoes_cap','insc','criadoEm',renderAdmin);
+    subscribe('reunioes','reun','criadoEm',renderAdmin);
+    subscribe('relatos_enviados','relPend','criadoEm',renderAdmin);
+    subscribe('indicacoes','inds','criadoEm',renderAdmin);
+  } else if(uid){
+    try{ const d=await db.collection('cadastros').doc(uid).get(); if(d.exists){ S.myCad=d.data(); fillCadastro(S.myCad); $('#cadSubmit').textContent='Atualizar meu cadastro'; $('#cadModeNote').innerHTML='<div class="notice ok" style="margin-bottom:16px">Você já está no banco de voluntários. Atualize seus dados sempre que sua disponibilidade mudar.</div>'; renderMySelo(); } }catch(e){}
+  }
+}
+
+/* ========== Formulários públicos ========== */
+function fillCadastro(c){
+  const f=$('#formCadastro');
+  ['nome','telefone','email','vinculo','curso','ligaNome','horasMes','modalidade','contribuicao','experiencia'].forEach(k=>{ if(f.elements[k]) f.elements[k].value=c[k]||''; });
+  $$('input[name="liga"]').forEach(i=>i.checked=i.value===c.liga); $('#ligaNomeWrap').hidden=c.liga!=='sim';
+  $$('input[name="bahiaVoluntario"]').forEach(i=>i.checked=i.value===(c.bahiaVoluntario||'nao'));
+  ['entidades','dias','turnos','areas','habilidades','interesses'].forEach(g=>setChips(g,c[g]));
+  $('#c-whats').checked=!!c.whatsappOk; $('#c-termo').checked=!!c.termo; $('#c-lgpd').checked=!!c.lgpd;
+}
+function contactFromCad(){ return (!isAdmin&&S.myCad)||{}; }
+function bindPublic(){
+  document.addEventListener('click',e=>{ const b=e.target.closest('button[data-k]'); if(!b) return; F[b.dataset.k]=b.dataset.v; ({seg:renderOpps,mod:renderOpps,ods:renderOpps,cap:renderCaps,ext:renderExt,ind:renderInds,reu:renderReu}[b.dataset.k]||function(){})(); });
+  $$('input[name="liga"]').forEach(i=>i.addEventListener('change',()=>{ $('#ligaNomeWrap').hidden=$('input[name="liga"]:checked').value!=='sim'; }));
+  $('#m-assunto').addEventListener('change',()=>{ $('#m-evento-wrap').hidden=$('#m-assunto').value!=='Preciso de monitores para um evento'; });
+  $('#cadReset').addEventListener('click',()=>{ $('#formCadastro').reset(); $('#ligaNomeWrap').hidden=true; $('#cadMsg').innerHTML=''; });
+
+  $('#formCadastro').addEventListener('submit',async e=>{
+    e.preventDefault(); const f=e.target, msg=$('#cadMsg');
+    const data={nome:f.elements.nome.value.trim(),telefone:f.elements.telefone.value.trim(),email:f.elements.email.value.trim(),vinculo:f.elements.vinculo.value,curso:f.elements.curso.value.trim(),
+      liga:($('input[name="liga"]:checked')||{}).value||'',ligaNome:f.elements.ligaNome.value.trim(),entidades:chipVals('entidades'),dias:chipVals('dias'),turnos:chipVals('turnos'),
+      horasMes:f.elements.horasMes.value,modalidade:f.elements.modalidade.value,areas:chipVals('areas'),habilidades:chipVals('habilidades'),interesses:chipVals('interesses'),
+      contribuicao:f.elements.contribuicao.value.trim(),experiencia:f.elements.experiencia.value.trim(),bahiaVoluntario:($('input[name="bahiaVoluntario"]:checked')||{}).value||'nao',
+      whatsappOk:$('#c-whats').checked,termo:$('#c-termo').checked,lgpd:$('#c-lgpd').checked};
+    const miss=[];
+    if(!data.nome) miss.push('nome'); if(digits(data.telefone).length<10) miss.push('telefone com DDD'); if(!validEmail(data.email)) miss.push('e-mail válido');
+    if(!data.vinculo) miss.push('vínculo'); if(!data.liga) miss.push('participação em liga'); if(!data.dias.length) miss.push('ao menos um dia');
+    if(!data.turnos.length) miss.push('ao menos um turno'); if(!data.areas.length) miss.push('ao menos uma frente'); if(!data.contribuicao) miss.push('como deseja contribuir');
+    if(!data.termo||!data.lgpd) miss.push('aceite do termo e da LGPD');
+    if(miss.length){ notice(msg,'bad','Falta preencher: '+miss.join(', ')+'.'); return; }
+    if(!db){ notice(msg,'info','Modo de apresentação: o cadastro foi validado, mas não pode ser gravado nesta visualização.'); return; }
+    const btn=$('#cadSubmit'); btn.disabled=true;
+    try{
+      const ref=isAdmin?db.collection('cadastros').doc():db.collection('cadastros').doc(uid);
+      const base=(!isAdmin&&S.myCad)?S.myCad:{status:'novo',horasCert:0,notas:'',criadoEm:now(),origem:isAdmin?'equipe':'portal'};
+      await ref.set(Object.assign({},base,data,{atualizadoEm:now()}));
+      if(isAdmin){ f.reset(); $('#ligaNomeWrap').hidden=true; notice(msg,'ok','Voluntário registrado no banco. Ele já aparece no Painel CAEX.'); }
+      else { S.myCad=Object.assign({},base,data); $('#cadSubmit').textContent='Atualizar meu cadastro'; renderMySelo(); notice(msg,'ok','Cadastro recebido! Obrigado por se disponibilizar. O CAEX entrará em contato quando houver uma ação compatível com seu perfil.'); }
+    }catch(err){ notice(msg,'bad',writeError(err)); }
+    btn.disabled=false;
+  });
+
+  $('#formRelato').addEventListener('submit',async e=>{
+    e.preventDefault(); const msg=$('#relMsg');
+    const d={nome:$('#r-nome').value.trim(),curso:$('#r-curso').value.trim(),iniciativa:$('#r-inic').value.trim(),periodo:$('#r-quando').value.trim(),titulo:$('#r-titulo').value.trim(),texto:$('#r-texto').value.trim(),autorizaNome:$('#r-autoriza').checked,status:'pendente',criadoEm:now()};
+    if(!d.nome||!d.iniciativa||!d.titulo||d.texto.length<80){ notice(msg,'bad','Preencha nome, iniciativa, título e um relato com pelo menos 80 caracteres.'); return; }
+    if(!db){ notice(msg,'info','Modo de apresentação: o relato não pode ser gravado nesta visualização.'); return; }
+    try{ await db.collection('relatos_enviados').add(d); e.target.reset(); $('#r-autoriza').checked=true; notice(msg,'ok','Relato enviado! A equipe do CAEX fará a revisão antes da publicação.'); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+
+  $('#formIndicacao').addEventListener('submit',async e=>{
+    e.preventDefault(); const msg=$('#indMsg');
+    const d={instituicao:$('#i-inst').value.trim(),tipo:$('#i-tipo').value,causa:$('#i-causa').value,local:$('#i-local').value.trim(),endereco:$('#i-end').value.trim(),responsavel:$('#i-resp').value.trim(),contatoLocal:$('#i-respcont').value.trim(),necessidade:$('#i-nec').value.trim(),motivo:$('#i-motivo').value.trim(),indicanteNome:$('#i-nome').value.trim(),indicanteContato:$('#i-contato').value.trim(),relacao:$('#i-rel').value,status:'recebida',parecer:'',criadoEm:now()};
+    if(!d.instituicao||!d.tipo||!d.local||!d.necessidade||!d.indicanteNome||!d.indicanteContato){ notice(msg,'bad','Preencha os campos marcados com asterisco.'); return; }
+    if(!db){ notice(msg,'info','Modo de apresentação: a indicação não pode ser gravada nesta visualização.'); return; }
+    try{ await db.collection('indicacoes').add(d); e.target.reset(); notice(msg,'ok','Indicação recebida! A equipe do CAEX vai analisar e, se necessário, entrar em contato com você.'); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+
+  $('#formReuniao').addEventListener('submit',async e=>{
+    e.preventDefault(); const msg=$('#reuMsg');
+    const d={nome:$('#m-nome').value.trim(),telefone:$('#m-tel').value.trim(),email:$('#m-email').value.trim(),perfil:$('#m-perfil').value,assunto:$('#m-assunto').value,evento:$('#m-evento').value.trim(),data1:$('#m-d1').value,turno1:$('#m-t1').value,data2:$('#m-d2').value,turno2:$('#m-t2').value,formato:($('input[name="m-formato"]:checked')||{}).value||'On-line',mensagem:$('#m-msg').value.trim(),status:'solicitada',confirmadoPara:'',linkLocal:'',notas:'',criadoEm:now()};
+    const miss=[]; if(!d.nome) miss.push('nome'); if(digits(d.telefone).length<10) miss.push('WhatsApp com DDD'); if(!validEmail(d.email)) miss.push('e-mail válido'); if(!d.perfil) miss.push('perfil'); if(!d.assunto) miss.push('assunto'); if(!d.data1) miss.push('1ª preferência de data');
+    if(d.data1&&d.data1<todayISO()) miss.push('uma data a partir de hoje');
+    if(miss.length){ notice(msg,'bad','Falta preencher: '+miss.join(', ')+'.'); return; }
+    if(!db){ notice(msg,'info','Modo de apresentação: a solicitação não pode ser gravada nesta visualização.'); return; }
+    try{ await db.collection('reunioes').add(d); e.target.reset(); $('#m-evento-wrap').hidden=true; notice(msg,'ok','Solicitação recebida! O CAEX vai confirmar data, horário e formato pelo WhatsApp ou e-mail.'); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+
+  $('#oppList').addEventListener('click',e=>{ const b=e.target.closest('[data-interest]'); if(b) openInterest(b.dataset.interest); });
+  $('#capList').addEventListener('click',e=>{ const b=e.target.closest('[data-insc]'); if(b) openInscricao(b.dataset.insc); });
+  $('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay'||e.target.closest('[data-close]')) closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+}
+function openModal(html){ $('#modal').innerHTML=html; $('#overlay').classList.add('open'); const f=$('#modal').querySelector('input,textarea,select,button'); if(f) f.focus(); }
+function closeModal(){ $('#overlay').classList.remove('open'); }
+function contactFields(prefix,c){ return '<div class="full"><label class="lbl" for="'+prefix+'-nome">Nome <span class="req">*</span></label><input type="text" id="'+prefix+'-nome" value="'+esc(c.nome||'')+'"></div><div><label class="lbl" for="'+prefix+'-tel">WhatsApp <span class="req">*</span></label><input type="tel" id="'+prefix+'-tel" value="'+esc(c.telefone||'')+'"></div><div><label class="lbl" for="'+prefix+'-email">E-mail <span class="req">*</span></label><input type="email" id="'+prefix+'-email" value="'+esc(c.email||'')+'"></div>'; }
+function readContact(prefix){ return {nome:$('#'+prefix+'-nome').value.trim(),telefone:$('#'+prefix+'-tel').value.trim(),email:$('#'+prefix+'-email').value.trim()}; }
+function contactOk(c){ return c.nome&&digits(c.telefone).length>=10&&validEmail(c.email); }
+function openInterest(id){
+  const o=S.opps.find(x=>x._id===id); if(!o) return;
+  openModal('<div class="modal-head"><div><span class="eyebrow">Manifestar interesse</span><h3 id="modalTitle">'+esc(o.titulo)+'</h3></div><button class="btn btn-ghost btn-sm" data-close>Fechar</button></div><p class="small muted">'+esc(o.data)+(o.local?' · '+esc(o.local):'')+'</p><form id="formInt" novalidate class="form-grid">'+contactFields('mi',contactFromCad())+'<div class="full"><label class="lbl" for="mi-msg">Mensagem (opcional)</label><textarea id="mi-msg" style="min-height:70px" placeholder="Ex.: posso apenas no turno da manhã"></textarea></div><div class="full"><button type="submit" class="btn btn-primary">Enviar interesse</button><div id="mi-res" style="margin-top:10px"></div></div></form>');
+  $('#formInt').addEventListener('submit',async ev=>{
+    ev.preventDefault(); const res=$('#mi-res'); const c=readContact('mi');
+    if(!contactOk(c)){ notice(res,'bad','Informe nome, WhatsApp com DDD e e-mail válido.'); return; }
+    if(!db){ notice(res,'info','Modo de apresentação: o interesse não pode ser gravado nesta visualização.'); return; }
+    try{ await db.collection('interesses').add(Object.assign(c,{oportunidadeId:o._id,oportunidadeTitulo:o.titulo,mensagem:$('#mi-msg').value.trim(),status:'novo',criadoEm:now()})); localPush('vol_interesses',o._id); notice(res,'ok','Interesse registrado! A equipe do CAEX vai confirmar sua participação.'); renderOpps(); setTimeout(closeModal,1600); }catch(err){ notice(res,'bad',writeError(err)); }
+  });
+}
+function openInscricao(id){
+  const k=S.caps.find(x=>x._id===id); if(!k) return; const c=contactFromCad();
+  openModal('<div class="modal-head"><div><span class="eyebrow">Inscrição gratuita</span><h3 id="modalTitle">'+esc(k.titulo)+'</h3></div><button class="btn btn-ghost btn-sm" data-close>Fechar</button></div><p class="small muted">'+esc(k.data)+(k.formato?' · '+esc(k.formato):'')+(k.ch?' · '+esc(k.ch)+'h':'')+'</p><form id="formInsc" novalidate class="form-grid">'+contactFields('mk',c)+'<div class="full"><label class="lbl" for="mk-vinc">Vínculo</label><select id="mk-vinc"><option>Estudante da UCSAL</option><option>Professor(a) ou técnico(a)</option><option>Egresso(a)</option><option>Comunidade externa</option></select></div><div class="full"><button type="submit" class="btn btn-primary">Confirmar inscrição</button><div id="mk-res" style="margin-top:10px"></div></div></form>');
+  $('#formInsc').addEventListener('submit',async ev=>{
+    ev.preventDefault(); const res=$('#mk-res'); const ct=readContact('mk');
+    if(!contactOk(ct)){ notice(res,'bad','Informe nome, WhatsApp com DDD e e-mail válido.'); return; }
+    if(!db){ notice(res,'info','Modo de apresentação: a inscrição não pode ser gravada nesta visualização.'); return; }
+    try{ await db.collection('inscricoes_cap').add(Object.assign(ct,{capId:k._id,capTitulo:k.titulo,vinculo:$('#mk-vinc').value,status:'inscrito',criadoEm:now()})); localPush('vol_inscricoes',k._id); notice(res,'ok','Inscrição confirmada! As orientações de acesso chegarão pelo e-mail informado.'); renderCaps(); setTimeout(closeModal,1800); }catch(err){ notice(res,'bad',writeError(err)); }
+  });
+}
+
+/* ========== Ações do painel ========== */
+async function upd(path,id,data){ try{ await db.collection(path).doc(id).update(data); toast('Alteração salva'); }catch(e){ toast(writeError(e)); } }
+async function del(path,id,ok){ try{ await db.collection(path).doc(id).delete(); toast(ok); }catch(e){ toast(writeError(e)); } }
+function confirmDo(text,fn){
+  openModal('<div class="modal-head"><h3 id="modalTitle">Confirmar</h3></div><p>'+esc(text)+'</p><div class="row-actions"><button class="btn btn-danger" id="cf-yes">Confirmar</button><button class="btn btn-ghost" data-close>Cancelar</button></div>');
+  $('#cf-yes').addEventListener('click',async()=>{ closeModal(); await fn(); });
+}
+function bindAdmin(){
+  $('#subtabs').addEventListener('click',e=>{ const b=e.target.closest('button[data-panel]'); if(!b) return; $$('#subtabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b))); $$('.admin-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+b.dataset.panel)); });
+  ['#f-busca','#f-dia','#f-turno','#f-area','#f-liga','#f-status'].forEach(s=>$(s).addEventListener('input',renderVol));
+  $('#volBody').addEventListener('change',e=>{
+    const s=e.target.closest('[data-vst]'); if(s) upd('cadastros',s.dataset.vst,{status:s.value});
+    const h=e.target.closest('[data-vh]'); if(h) upd('cadastros',h.dataset.vh,{horasCert:Math.max(0,Number(h.value)||0)});
+  });
+  $('#volBody').addEventListener('click',e=>{
+    const d=e.target.closest('[data-vdet]'); if(d){ openDetail=openDetail===d.dataset.vdet?null:d.dataset.vdet; renderVol(); return; }
+    const n=e.target.closest('[data-vnote]'); if(n){ upd('cadastros',n.dataset.vnote,{notas:$('#vn-'+n.dataset.vnote).value}); return; }
+    const dc=e.target.closest('[data-vdecl]'); if(dc){ const v=S.vol.find(x=>x._id===dc.dataset.vdecl); if(!v) return; const h=Number(v.horasCert)||0;
+      const txt='DECLARAÇÃO\n\nA Coordenação de Ações Comunitárias e de Extensão (CAEX) da Universidade Católica do Salvador declara, para os devidos fins, que '+v.nome+(v.curso?', '+v.curso+',':'')+' participou do Programa de Voluntariado da UCSAL, totalizando '+h+' ('+h+') horas de serviço voluntário certificadas, nos termos da Lei nº 9.608/1998.\n\nSalvador, '+new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'})+'.\n\n_______________________________\nCoordenação de Ações Comunitárias e de Extensão – CAEX/UCSAL';
+      openModal('<div class="modal-head"><h3 id="modalTitle">Declaração de horas</h3><button class="btn btn-ghost btn-sm" data-close>Fechar</button></div><p class="small muted">Revise o texto, copie e cole no modelo timbrado da UCSAL.</p><textarea id="declTxt" style="min-height:260px">'+esc(txt)+'</textarea><div class="row-actions"><button class="btn btn-primary btn-sm" id="declCopy">Copiar texto</button></div>');
+      $('#declCopy').addEventListener('click',()=>copyText($('#declTxt').value,'Declaração')); return; }
+    const x=e.target.closest('[data-vdel]'); if(x) confirmDo('Excluir este cadastro do banco de voluntários?',async()=>{ await del('cadastros',x.dataset.vdel,'Cadastro excluído'); openDetail=null; });
+  });
+  $('#copyCsv').addEventListener('click',()=>{
+    const rows=[['Nome','Telefone','E-mail','Vínculo','Curso','Liga','Qual liga','Dias','Turnos','Frentes','Habilidades','Interesses','Modalidade','Horas/mês','Situação','Horas certificadas','Selo','Cadastro']];
+    volFiltered().forEach(v=>{ const h=Number(v.horasCert)||0; rows.push([v.nome,v.telefone,v.email,v.vinculo,v.curso,v.liga==='sim'?'Sim':'Não',v.ligaNome,arr(v.dias).join(', '),arr(v.turnos).join(', '),arr(v.areas).map(a=>(SEG_BY_ID[a]||{nome:a}).nome).join(', '),arr(v.habilidades).join(', '),arr(v.interesses).join(', '),v.modalidade,v.horasMes,(VOL_STATUS[v.status||'novo']||[''])[0],h,seloFor(h).nome,fmtDate(v.criadoEm)]); });
+    copyText(csv(rows),'Planilha');
+  });
+  $('#copyEmails').addEventListener('click',()=>copyText(volFiltered().map(v=>v.email).filter(Boolean).join('; '),'Lista de e-mails'));
+  $('#convocar').addEventListener('click',()=>{
+    const list=volFiltered().filter(v=>v.whatsappOk!==false); const open=openOpps();
+    openModal('<div class="modal-head"><div><span class="eyebrow">Convocação por perfil</span><h3 id="modalTitle">'+list.length+' voluntários no filtro atual</h3></div><button class="btn btn-ghost btn-sm" data-close>Fechar</button></div><p class="small muted">A convocação usa os filtros aplicados na lista e inclui apenas quem aceitou receber avisos.</p><div><label class="lbl" for="cv-opp">Oportunidade</label><select id="cv-opp">'+open.map(o=>'<option value="'+esc(o._id)+'">'+esc(o.titulo)+'</option>').join('')+'</select></div><div><label class="lbl" for="cv-txt">Mensagem</label><textarea id="cv-txt" style="min-height:170px"></textarea></div><div class="row-actions"><button class="btn btn-primary btn-sm" id="cv-copy">Copiar mensagem</button><button class="btn btn-ghost btn-sm" id="cv-nums">Copiar telefones</button><button class="btn btn-ghost btn-sm" id="cv-mails">Copiar e-mails</button></div>');
+    const build=()=>{ const o=S.opps.find(x=>x._id===$('#cv-opp').value); $('#cv-txt').value=o?'Olá! Aqui é a equipe do CAEX/UCSAL. Você está no nosso banco de voluntários e temos uma ação que combina com seu perfil:\n\n*'+o.titulo+'*\n📅 '+o.data+(o.local?'\n📍 '+o.local:'')+(o.horas?'\n🎓 '+o.horas+'h certificadas':'')+'\n\n'+o.descricao+'\n\nPodemos contar com você? Responda esta mensagem para confirmar. A participação é voluntária e você pode recusar sem problema.':'Olá! Aqui é a equipe do CAEX/UCSAL. Você está no nosso banco de voluntários e temos uma nova ação. Podemos contar com você?'; };
+    $('#cv-opp').addEventListener('change',build); build();
+    $('#cv-copy').addEventListener('click',()=>copyText($('#cv-txt').value,'Mensagem'));
+    $('#cv-nums').addEventListener('click',()=>copyText(list.map(v=>v.nome+' – '+v.telefone).join('\n'),'Lista de telefones'));
+    $('#cv-mails').addEventListener('click',()=>copyText(list.map(v=>v.email).filter(Boolean).join('; '),'Lista de e-mails'));
+  });
+
+  $('#formOpp').addEventListener('submit',async e=>{
+    e.preventDefault(); const msg=$('#oppMsg');
+    const d={titulo:$('#o-titulo').value.trim(),segmento:$('#o-seg').value,modalidade:$('#o-mod').value,dataISO:$('#o-dataiso').value,data:$('#o-data').value.trim(),local:$('#o-local').value.trim(),turno:$('#o-turno').value,vagas:$('#o-vagas').value?Number($('#o-vagas').value):null,horas:$('#o-horas').value?Number($('#o-horas').value):null,ods:chipVals('o-ods').map(Number),descricao:$('#o-desc').value.trim()};
+    if(!d.titulo||!d.segmento||!d.data||!d.descricao){ notice(msg,'bad','Preencha título, frente, data por extenso e descrição.'); return; }
+    try{ if(editingOpp){ await db.collection('oportunidades').doc(editingOpp).update(d); notice(msg,'ok','Oportunidade atualizada.'); } else { await db.collection('oportunidades').add(Object.assign(d,{status:'aberta',exemplo:false,criadoEm:now()})); notice(msg,'ok','Oportunidade publicada no portal.'); } resetOppForm(); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+  $('#oppCancel').addEventListener('click',()=>{ resetOppForm(); $('#oppMsg').innerHTML=''; });
+  $('#oppAdminBody').addEventListener('click',e=>{
+    const ed=e.target.closest('[data-oedit]'); if(ed){ const o=S.opps.find(x=>x._id===ed.dataset.oedit); if(!o) return; editingOpp=o._id;
+      $('#o-titulo').value=o.titulo||''; $('#o-seg').value=o.segmento||''; $('#o-mod').value=o.modalidade||'Presencial'; $('#o-dataiso').value=o.dataISO||''; $('#o-data').value=o.data||''; $('#o-local').value=o.local||''; $('#o-turno').value=o.turno||'Manhã'; $('#o-vagas').value=o.vagas||''; $('#o-horas').value=o.horas||''; setChips('o-ods',o.ods); $('#o-desc').value=o.descricao||'';
+      $('#oppFormTitle').textContent='Editar oportunidade'; $('#oppSubmit').textContent='Salvar alterações'; $('#oppCancel').hidden=false; $('#formOpp').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    const tg=e.target.closest('[data-otoggle]'); if(tg){ const o=S.opps.find(x=>x._id===tg.dataset.otoggle); if(o) upd('oportunidades',o._id,{status:o.status==='encerrada'?'aberta':'encerrada'}); return; }
+    const dl=e.target.closest('[data-odel]'); if(dl) confirmDo('Excluir esta oportunidade? Os interessados já registrados continuam na aba Interessados.',()=>del('oportunidades',dl.dataset.odel,'Oportunidade excluída'));
+  });
+  $('#f-int-opp').addEventListener('change',renderInts);
+  $('#intBody').addEventListener('change',e=>{ const s=e.target.closest('[data-ist]'); if(s) upd('interesses',s.dataset.ist,{status:s.value}); });
+  $('#copyIntCsv').addEventListener('click',()=>{ const rows=[['Nome','Telefone','E-mail','Oportunidade','Mensagem','Situação','Data']]; intFiltered().forEach(i=>rows.push([i.nome,i.telefone,i.email,i.oportunidadeTitulo,i.mensagem,(INT_STATUS[i.status||'novo']||[''])[0],fmtDate(i.criadoEm)])); copyText(csv(rows),'Lista'); });
+
+  $('#formCap').addEventListener('submit',async e=>{
+    e.preventDefault(); const msg=$('#capMsg');
+    const d={titulo:$('#k-titulo').value.trim(),tipo:$('#k-tipo').value,formato:$('#k-formato').value,ch:$('#k-ch').value?Number($('#k-ch').value):null,vagas:$('#k-vagas').value?Number($('#k-vagas').value):null,dataISO:$('#k-dataiso').value,data:$('#k-data').value.trim(),link:$('#k-link').value.trim(),descricao:$('#k-desc').value.trim()};
+    if(!d.titulo||!d.data||!d.descricao){ notice(msg,'bad','Preencha título, data por extenso e descrição.'); return; }
+    if(d.link&&!/^https?:\/\//.test(d.link)){ notice(msg,'bad','O link precisa começar com https://'); return; }
+    try{ if(editingCap){ await db.collection('capacitacoes').doc(editingCap).update(d); notice(msg,'ok','Formação atualizada.'); } else { await db.collection('capacitacoes').add(Object.assign(d,{status:'aberta',exemplo:false,ordem:100+S.caps.length,criadoEm:now()})); notice(msg,'ok','Formação publicada no portal.'); } resetCapForm(); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+  $('#capCancel').addEventListener('click',()=>{ resetCapForm(); $('#capMsg').innerHTML=''; });
+  $('#capAdminBody').addEventListener('click',e=>{
+    const ed=e.target.closest('[data-kedit]'); if(ed){ const c=S.caps.find(x=>x._id===ed.dataset.kedit); if(!c) return; editingCap=c._id;
+      $('#k-titulo').value=c.titulo||''; $('#k-tipo').value=c.tipo||'especifica'; $('#k-formato').value=c.formato||'On-line ao vivo'; $('#k-ch').value=c.ch||''; $('#k-vagas').value=c.vagas||''; $('#k-dataiso').value=c.dataISO||''; $('#k-data').value=c.data||''; $('#k-link').value=c.link||''; $('#k-desc').value=c.descricao||'';
+      $('#capFormTitle').textContent='Editar formação'; $('#capSubmit').textContent='Salvar alterações'; $('#capCancel').hidden=false; $('#formCap').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    const tg=e.target.closest('[data-ktoggle]'); if(tg){ const c=S.caps.find(x=>x._id===tg.dataset.ktoggle); if(c) upd('capacitacoes',c._id,{status:c.status==='encerrada'?'aberta':'encerrada'}); return; }
+    const dl=e.target.closest('[data-kdel]'); if(dl) confirmDo('Excluir esta formação? As inscrições já feitas continuam registradas.',()=>del('capacitacoes',dl.dataset.kdel,'Formação excluída'));
+  });
+  $('#f-insc-cap').addEventListener('change',renderCapAdmin);
+  $('#inscBody').addEventListener('change',e=>{ const s=e.target.closest('[data-inst]'); if(s) upd('inscricoes_cap',s.dataset.inst,{status:s.value}); });
+  $('#copyInscCsv').addEventListener('click',()=>{ const rows=[['Nome','Telefone','E-mail','Formação','Vínculo','Situação','Data']]; inscFiltered().forEach(i=>rows.push([i.nome,i.telefone,i.email,i.capTitulo,i.vinculo,(INSC_STATUS[i.status||'inscrito']||[''])[0],fmtDate(i.criadoEm)])); copyText(csv(rows),'Lista'); });
+
+  $('#reuList').addEventListener('click',e=>{
+    const s=e.target.closest('[data-rsave]'); if(s){ const id=s.dataset.rsave; upd('reunioes',id,{status:$('#rs-'+id).value,confirmadoPara:$('#rd-'+id).value.trim(),linkLocal:$('#rl-'+id).value.trim(),notas:$('#rn-'+id).value}); return; }
+    const m=e.target.closest('[data-rmsg]'); if(m){ const id=m.dataset.rmsg, r=S.reun.find(x=>x._id===id); if(!r) return; const quando=$('#rd-'+id).value.trim()||'[data e horário]', onde=$('#rl-'+id).value.trim()||(r.formato==='Presencial'?'[local]':'[link do Meet]');
+      copyText('Olá, '+r.nome.split(' ')[0]+'! Aqui é a equipe do CAEX/UCSAL. Confirmamos nossa conversa sobre "'+r.assunto+'" para '+quando+', '+(r.formato==='Presencial'?'presencialmente em '+onde:'on-line pelo link '+onde)+'. Qualquer imprevisto, é só responder esta mensagem. Até lá!','Mensagem'); return; }
+    const d=e.target.closest('[data-rdel]'); if(d) confirmDo('Excluir esta solicitação de reunião?',()=>del('reunioes',d.dataset.rdel,'Solicitação excluída'));
+  });
+
+  $('#relPend').addEventListener('click',async e=>{
+    const p=e.target.closest('[data-rpub]'); if(p){ const r=S.relPend.find(x=>x._id===p.dataset.rpub); if(!r) return;
+      try{ await db.collection('relatos').doc(r._id).set({nome:r.autorizaNome?r.nome:'Voluntário(a) UCSAL',curso:r.autorizaNome?r.curso:'',iniciativa:r.iniciativa,periodo:r.periodo||'',titulo:r.titulo,texto:r.texto,publicadoEm:now(),exemplo:!!r.exemplo}); await db.collection('relatos_enviados').doc(r._id).update({status:'publicado'}); toast('Relato publicado no portal'); }catch(err){ toast(writeError(err)); } return; }
+    const x=e.target.closest('[data-rrec]'); if(x) upd('relatos_enviados',x.dataset.rrec,{status:'recusado'});
+  });
+  $('#relPub').addEventListener('click',e=>{ const u=e.target.closest('[data-runpub]'); if(u) confirmDo('Retirar este relato do portal?',()=>del('relatos',u.dataset.runpub,'Relato retirado')); });
+  $('#indList').addEventListener('click',e=>{
+    const s=e.target.closest('[data-isave]'); if(s){ const id=s.dataset.isave; upd('indicacoes',id,{status:$('#is-'+id).value,parecer:$('#ip-'+id).value,analisadoEm:now()}); return; }
+    const d=e.target.closest('[data-idel]'); if(d) confirmDo('Excluir esta indicação?',()=>del('indicacoes',d.dataset.idel,'Indicação excluída'));
+  });
+  $('#numCalc').addEventListener('click',()=>{ const n=calcNums(); $('#n-vol').value=n.voluntarios; $('#n-horas').value=n.horas; $('#n-inst').value=n.instituicoes; $('#n-acoes').value=n.acoes; });
+  $('#numPub').addEventListener('click',async()=>{
+    const msg=$('#numMsg'); const v=id=>Math.max(0,Number($(id).value)||0);
+    try{ await db.doc('publico/indicadores').set({voluntarios:v('#n-vol'),horas:v('#n-horas'),instituicoes:v('#n-inst'),acoes:v('#n-acoes'),atualizadoEm:now()}); notice(msg,'ok','Números publicados na página inicial.'); }catch(err){ notice(msg,'bad',writeError(err)); }
+  });
+}
+function resetOppForm(){ editingOpp=null; $('#formOpp').reset(); setChips('o-ods',[]); $('#oppFormTitle').textContent='Nova oportunidade'; $('#oppSubmit').textContent='Publicar oportunidade'; $('#oppCancel').hidden=true; }
+function resetCapForm(){ editingCap=null; $('#formCap').reset(); $('#capFormTitle').textContent='Nova formação'; $('#capSubmit').textContent='Publicar formação'; $('#capCancel').hidden=true; }
+
+/* ========== Ilustração ========== */
+function drawHero(){
+  const c=$('#heroCanvas'); if(!c) return;
+  const r=c.getBoundingClientRect(); if(!r.width) return; const dpr=window.devicePixelRatio||1;
+  c.width=r.width*dpr; c.height=r.height*dpr;
+  const g=c.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,r.width,r.height);
+  let seed=11; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const pts=[]; for(let i=0;i<40;i++) pts.push([rnd()*r.width,rnd()*r.height]);
+  g.strokeStyle='rgba(240,196,98,.35)'; g.lineWidth=1;
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ const dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1]; if(dx*dx+dy*dy<100*100){ g.beginPath(); g.moveTo(pts[i][0],pts[i][1]); g.lineTo(pts[j][0],pts[j][1]); g.stroke(); } }
+  pts.forEach((p,i)=>{ g.fillStyle=i%5===0?'#F0C462':'rgba(255,255,255,.75)'; g.beginPath(); g.arc(p[0],p[1],i%5===0?3.4:1.8,0,Math.PI*2); g.fill(); });
+}
+window.addEventListener('resize',()=>{ clearTimeout(drawHero._t); drawHero._t=setTimeout(drawHero,200); });
+
+init();
+})();
+</script>
+</body>
+</html>
